@@ -2,7 +2,7 @@
 
 &pdaf_nml
   screen = 2
-  dim_ens = 2
+  dim_ens = 5
   filtertype = 7
   subtype = 0
   type_trans = 0
@@ -15,21 +15,21 @@
 &io_nml
   verbose_io = 2
   sgldbl_io = 'dbl'
-  path_dom = '/storage/research/nceo/ia923171/nemo/nemo_5.0.1/cfgs/UOR_ORCA2_ICE/ens_1'
+  path_dom = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/EXP00_template_rundir/'
   fname_dom = 'ORCA_R2_zps_domcfg.nc'
   ! the parth to restart files is constructed by the following variables
   ! path_rst_root//ens_prefix[1-N]//path_rst_suffix//f_basename_rst_000x.nc
-  path_rst_root = '/storage/research/nceo/ia923171/nemo/nemo_5.0.1/cfgs/UOR_ORCA2_ICE/'
+  path_rst_root = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/'
   ! ensemble prefix
   ! ensemble numbers must be from 1 - N, it cannot have zero paddings.
   ens_prefix = 'ens_'
   ! rest of the path to restart files
-  path_rst_suffix = '.'
-  f_basename_rst = 'ORCA2_00000072_restart'
+  path_rst_suffix = 'restart_end_ctrl/'
+  f_basename_rst = 'ORCA2_00043800_restart_end_ctrl'
   ! the parth to increment files is constructed by the following variables
   ! path_asm_root//ens_prefix[1-N]/assim_background_increments_xxxx.nc
   ! path_asm_root//ens_prefix[1-N]/assim_background_state_DI_xxxx.nc
-  path_asm_root = '/storage/research/nceo/ia923171/nemo/nemo_5.0.1/cfgs/UOR_ORCA2_ICE/'
+  path_asm_root = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/'
   ! initial time of day in hhmm
   nn_time0 = 0
 /
@@ -37,7 +37,7 @@
 &sv_nml
   n_fields=6
   use_wet_state = 2
-  numcat = 5
+  numcat = 6
 /
 
 &sfields_nml
@@ -46,7 +46,7 @@
   sfields(1)%name_incr = 'bckinseaice_cat_1'
   sfields(1)%name_rest_n = 'a_i'
   sfields(1)%name_bkg_din = 'a_i_cat_1'
-  sfields(1)%rst_file = 'ORCA2_00000072_restart_ice'
+  sfields(1)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   ! Name of field in vertical level direction
   ! 'lev' for vertical levels
   ! or 'cat' for sea ice categories
@@ -72,7 +72,7 @@
   sfields(2)%name_incr = 'bckinseaice_cat_2'
   sfields(2)%name_bkg_din = 'a_i_cat_2'
   sfields(2)%name_rest_n = 'a_i'
-  sfields(2)%rst_file = 'ORCA2_00000072_restart_ice'
+  sfields(2)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   sfields(2)%k_name = 'cat'
   sfields(2)%operation = 'select_cat_ice'
   sfields(2)%ice_cat = 2
@@ -85,7 +85,7 @@
   sfields(3)%name_incr = 'bckinseaice_cat_3'
   sfields(3)%name_rest_n = 'a_i'
   sfields(3)%name_bkg_din = 'a_i_cat_3'
-  sfields(3)%rst_file = 'ORCA2_00000072_restart_ice'
+  sfields(3)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   sfields(3)%k_name = 'cat'
   sfields(3)%operation = 'select_cat_ice'
   sfields(3)%ice_cat = 3
@@ -98,7 +98,7 @@
   sfields(4)%name_incr = 'bckinseaice_cat_4'
   sfields(4)%name_rest_n = 'a_i'
   sfields(4)%name_bkg_din = 'a_i_cat_4'
-  sfields(4)%rst_file = 'ORCA2_00000072_restart_ice'
+  sfields(4)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   sfields(4)%k_name = 'cat'
   sfields(4)%operation = 'select_cat_ice'
   sfields(4)%ice_cat = 4
@@ -111,7 +111,7 @@
   sfields(5)%name_incr = 'bckinseaice_cat_5'
   sfields(5)%name_rest_n = 'a_i'
   sfields(5)%name_bkg_din = 'a_i_cat_5'
-  sfields(5)%rst_file = 'ORCA2_00000072_restart_ice'
+  sfields(5)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   sfields(5)%k_name = 'cat'
   sfields(5)%operation = 'select_cat_ice'
   sfields(5)%ice_cat = 5
@@ -120,20 +120,34 @@
   sfields(5)%min_limit = 0
 
   sfields(6)%ndims = 2
-  sfields(6)%variable = 'volume'
-  sfields(6)%name_incr = 'bckinsit'
-  sfields(6)%name_rest_n = 'v_i'
-  sfields(6)%name_bkg_din = 'v_i'
-  sfields(6)%rst_file = 'ORCA2_00000072_restart_ice'
-  sfields(6)%unit = 'm'
-  sfields(6)%operation = 'sum_over_cat_ice'
+  sfields(6)%variable = 'area_cat_6'
+  sfields(6)%name_incr = 'bckinseaice_cat_6'
+  sfields(6)%name_rest_n = 'a_i'
+  sfields(6)%name_bkg_din = 'a_i_cat_6'
+  sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
   sfields(6)%k_name = 'cat'
-  sfields(6)%transform = 0
-  sfields(6)%trafo_shift = 0.0
-  ! These limit seems to be treated directly by ASMINC,
-  ! so we may just use limit = 0?
-  sfields(6)%limit = 1
-  sfields(6)%min_limit = 0.000001
+  sfields(6)%operation = 'select_cat_ice'
+  sfields(6)%ice_cat = 6
+  sfields(6)%limit = 3
+  sfields(6)%max_limit = 1
+  sfields(6)%min_limit = 0
+
+
+  !sfields(6)%ndims = 2
+  !sfields(6)%variable = 'volume'
+  !sfields(6)%name_incr = 'bckinsit'
+  !sfields(6)%name_rest_n = 'v_i'
+  !sfields(6)%name_bkg_din = 'v_i'
+  !sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  !sfields(6)%unit = 'm'
+  !sfields(6)%operation = 'sum_over_cat_ice'
+  !sfields(6)%k_name = 'cat'
+  !sfields(6)%transform = 0
+  !sfields(6)%trafo_shift = 0.0
+  !! These limit seems to be treated directly by ASMINC,
+  !! so we may just use limit = 0?
+  !sfields(6)%limit = 1
+  !sfields(6)%min_limit = 0.000001
 /
 
 &mgrid_ssh_nml
