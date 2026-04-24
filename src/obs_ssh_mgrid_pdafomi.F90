@@ -39,9 +39,16 @@ module obs_ssh_mgrid_pdafomi
    real(pwp) :: sradius = 1.0
    !> Standard deviation for Gaussian noise in twin experiment
    real(pwp) :: noise_amp = 1
+   !> path to obs file
+   character(lc) :: file_ssh_mgrid = 'ssh_obs.nc'
+   !> Name of SIC variable in the observation file
+   character(lc) :: varname_ssh_mgrid = 'sic'
+   !> Time step index to read from the observation file
+   integer :: nc_step = 1 !WILL NEED TO BE ABLE TO LINE THESE UP
 
    namelist /mgrid_ssh_nml/ assim_ssh_mgrid, use_global_obs, id_sfields, rms, &
-                            lradius, sradius, noise_amp
+                            lradius, sradius, noise_amp, file_ssh_mgrid, &
+                            nc_step, varname_ssh_mgrid
 
    !> Instance of full observation data type - see `PDAFomi` for details.
    type(obs_f), target, public :: thisobs
@@ -61,6 +68,9 @@ contains
           write (*, '(a,5x,a,f12.4)') 'NEMO-PDAF', 'noise_amp      ', noise_amp
           write (*, '(a,5x,a,es12.4)') 'NEMO-PDAF','lradius        ', lradius
           write (*, '(a,5x,a,es12.4)') 'NEMO-PDAF','sradius        ', sradius
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'obs_file   ', trim(file_ssh_mgrid)
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'varname', trim(varname_ssh_mgrid)
+          write (*, '(a,5x,a,i0)')   'NEMO-PDAF', 'nc_step          ', nc_step
       end if
    end subroutine print_ssh_mgrid_configuration
 
@@ -99,17 +109,26 @@ contains
    subroutine init_dim_obs_ssh_mgrid(step, dim_obs)
       use PDAF, only: PDAFomi_gather_obs
       use statevector_pdaf, only: sfields
-      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit
+      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit,jpiglo,jpjglo
+      use io_pdaf, only: check
 
       integer, intent(in)    :: step    !< Current time step
       integer, intent(inout) :: dim_obs !< Dimension of full observation vector
 
       integer :: i                             !> Counters
       integer :: dim_obs_p                     !> Number of process-local observations
+      integer :: ncid, id_var
+      integer :: pos(3), cnt(3)         
       real(pwp), allocatable :: obs_p(:)       !> PE-local observation vector
+
       real(pwp), allocatable :: ivar_obs_p(:)  !> PE-local inverse observation error variance
       real(pwp), allocatable :: ocoord_p(:, :) !> PE-local observation coordinates
       real(pwp) :: rad_conv = 3.141592653589793/180.0 !> Degree to radian conversion
+      real(pwp), allocatable :: obs_global(:,:) !< Global obs field read from file
+      integer :: ndims, natts, xtype
+      integer :: dimids(NF90_MAX_VAR_DIMS)
+      integer :: ik, dimlen
+      character(len=NF90_MAX_NAME) :: varname, dimname
 
       ! *****************************
       ! *** Global setting config ***
@@ -128,6 +147,41 @@ contains
       thisobs%use_global_obs = use_global_obs
       ! Omit large innovation to omit nwet = 0 points
       thisobs%inno_omit = 1e6
+      
+      ! **********************************
+      ! *** Read observations from file ***
+      ! **********************************
+      if (mype_filter == 0) then
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- obs file: ', trim(file_ssh_mgrid)
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- variable: ', trim(varname_ssh_mgrid)
+         write (*, '(a,4x,a,i0)') 'NEMO-PDAF', '--- reading nc_step: ', nc_step
+      end if
+
+      allocate(obs_global(jpjglo, jpiglo)) !148 x 180
+
+      call check( nf90_open(trim(file_ssh_mgrid), NF90_NOWRITE, ncid) )
+      call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
+      call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
+      
+      call check( nf90_inquire_variable(ncid, id_var, name=varname, xtype=xtype, &
+                                 ndims=ndims, dimids=dimids, natts=natts) )
+
+      print *, 'Variable:', trim(varname)
+      print *, 'Number of dimensions:', ndims
+
+      ! Loop over dimensions in the order Fortran sees them to check same as ens
+      do ik = 1, ndims
+         call check( nf90_inquire_dimension(ncid, dimids(ik), name=dimname, len=dimlen) )
+         print *, 'Dim', ik, ':', trim(dimname), ' size =', dimlen
+      end do
+
+      pos = (/1, 1, nc_step/)
+      cnt = (/jpiglo, jpjglo, 1/)
+      call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
+      call check( nf90_close(ncid) )
+      
+
+
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
       ! *** and initialize index and coordinate arrays.         ***
@@ -154,7 +208,7 @@ contains
          ! *********************************************************
          ! *** For twin experiment: Read synthetic observations  ***
          ! *********************************************************
-         call add_noise(dim_obs_p, obs_p)
+         !call add_noise(dim_obs_p, obs_p) DON'T WANT TO DO THIS - need to read in WHOLE OBS
       else
          ! Set empty arrays if no local observations
          allocate (obs_p(1))

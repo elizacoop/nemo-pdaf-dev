@@ -152,6 +152,8 @@
 
 &mgrid_ssh_nml
   assim_ssh_mgrid = .true.
+  varname_ssh_mgrid = 'sea_ice_concentration' !! this is time=308,y=148,x=180, vals 0-100
+  file_ssh_mgrid = '/work/n01/n01/elicoo/observations/data_v3_2010-2023.nc'
   use_global_obs = 1
   ! this is the index of obs. in sfields for fake obs.
   id_sfields = 1
