@@ -623,7 +623,7 @@ contains
 
       call check( nf90_put_var(ncid, id_lon, nav_lon, startC, countC))
       call check( nf90_put_var(ncid, id_lat, nav_lat, startC, countC))
-      call check( nf90_put_var(ncid, id_lev, nav_lev, [1], [nk_p]))
+      !call check( nf90_put_var(ncid, id_lev, nav_lev, [1], [nk_p])) **don't want this for sea ice
       call check( nf90_put_var(ncid, id_time_counter, time_counter, start=[1], count=[1]))
       ! keep all time attributes identical as NEMO assigns dateb=datef=time
       call check( nf90_put_var(ncid, id_rdastp, ndastp))

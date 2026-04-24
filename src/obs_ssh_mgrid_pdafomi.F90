@@ -158,7 +158,7 @@ contains
       end if
 
       allocate(obs_global(jpjglo, jpiglo)) !148 x 180
-
+      obs_global = -1
       call check( nf90_open(trim(file_ssh_mgrid), NF90_NOWRITE, ncid) )
       call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
       call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
@@ -180,7 +180,7 @@ contains
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid) )
       
-
+      write(*,*) minval(obs_global), maxval(obs_global)
 
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
@@ -196,15 +196,32 @@ contains
          ! Coordinate array for observation operator
          allocate (thisobs%id_obs_p(1, dim_obs_p))
          allocate (ivar_obs_p(dim_obs_p))
+         obs_p = -1
          do i = 1, nwet
             ! State vector index counter for observation operator.
-            obs_p(i) = 0.0_pwp
+            !obs_p(i) = 0.0_pwp
+            !*** READING FROM GLOBAL_OBS - BUT IS THIS CORRECT??
+            obs_p(i) = obs_global(wet_pts(2, i), wet_pts(1, i))
+            !if (i == 1) then
+
+            !    write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
+            !    write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
+            !endif
+            ! if (i == nwet) then
+            !      write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
+            !      write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
+
+             !endif
+           !write(*,*)
             ! Observation coordinates - must be in radians for PDAFOMI
             ocoord_p(1, i) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
             ocoord_p(2, i) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
             ! Coordinates for observation operator (gridpoint)
             thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
          end do
+         write (*,*) minval(obs_p),maxval(obs_p)
+
+
          ! *********************************************************
          ! *** For twin experiment: Read synthetic observations  ***
          ! *********************************************************
@@ -217,6 +234,8 @@ contains
          allocate (thisobs%id_obs_p(1, 1))
          allocate (ivar_obs_p(1))
       end if
+      deallocate(obs_global)
+
       ! ****************************************************************
       ! *** Define observation errors for process-local observations ***
       ! ****************************************************************
