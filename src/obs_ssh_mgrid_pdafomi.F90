@@ -111,6 +111,7 @@ contains
       use statevector_pdaf, only: sfields
       use nemo_pdaf, only: nwet, wet_pts, glamt, gphit,jpiglo,jpjglo
       use io_pdaf, only: check
+      use, intrinsic :: ieee_arithmetic ! to detect Nans
 
       integer, intent(in)    :: step    !< Current time step
       integer, intent(inout) :: dim_obs !< Dimension of full observation vector
@@ -179,8 +180,14 @@ contains
       cnt = (/jpiglo, jpjglo, 1/)
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid) )
-      
+      where (ieee_is_nan(obs_global))
+          obs_global = 0.0             !set nan values to zero
+      end where
+
+      obs_global = obs_global / 100.0          !divide by 10 to convert from % to fraction
       write(*,*) minval(obs_global), maxval(obs_global)
+      
+
 
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
