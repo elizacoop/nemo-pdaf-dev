@@ -428,11 +428,11 @@ contains
                                'BOX'))
 
       ! define dimensions for NEMO-input file
-      call check( NF90_DEF_DIM(ncid,'t', NF90_UNLIMITED, dimid_time))
       ! define spatial dimensions
-      call check( NF90_DEF_DIM(ncid, 'z', nk_p, dimid_lvls))
-      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
       call check( NF90_DEF_DIM(ncid, 'x', ni_p, dimid_lon) )
+      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
+      call check( NF90_DEF_DIM(ncid, 'nav_lev', nk_p, dimid_lvls))
+      call check( NF90_DEF_DIM(ncid,'time_counter', NF90_UNLIMITED, dimid_time))
 
       dimids_field=[dimid_lon, dimid_lat, dimid_lvls, dimid_time]
       ! define variables
@@ -581,16 +581,16 @@ contains
                                'BOX'))
 
       ! define dimensions for NEMO-input file
-      call check( NF90_DEF_DIM(ncid,'t', NF90_UNLIMITED, dimid_time))
       ! define spatial dimensions
-      call check( NF90_DEF_DIM(ncid, 'z', nk_p, dimid_lvls))
-      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
       call check( NF90_DEF_DIM(ncid, 'x', ni_p, dimid_lon) )
+      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
+      call check( NF90_DEF_DIM(ncid, 'nav_lev', nk_p, dimid_lvls))
+      call check( NF90_DEF_DIM(ncid,'time_counter', NF90_UNLIMITED, dimid_time))
 
       dimids_field=[dimid_lon, dimid_lat, dimid_lvls, dimid_time]
       ! define variables
       call check( NF90_DEF_VAR(ncid, 'rdastp', NF90_DOUBLE, id_rdastp))
-      call check( NF90_DEF_VAR(ncid, 'time_counter', NF90_DOUBLE, id_time_counter))
+      call check( NF90_DEF_VAR(ncid, 'time_counter', NF90_DOUBLE, dimid_time, id_time_counter))
       call check( NF90_DEF_VAR(ncid, 'nav_lat', NF90_FLOAT, dimids_field(1:2), id_lat))
       call check( NF90_DEF_VAR(ncid, 'nav_lon', NF90_FLOAT, dimids_field(1:2), id_lon))
       call check( NF90_DEF_VAR(ncid, 'nav_lev', NF90_FLOAT, dimids_field(3), id_lev))
@@ -623,7 +623,7 @@ contains
 
       call check( nf90_put_var(ncid, id_lon, nav_lon, startC, countC))
       call check( nf90_put_var(ncid, id_lat, nav_lat, startC, countC))
-      !call check( nf90_put_var(ncid, id_lev, nav_lev, [1], [nk_p])) **don't want this for sea ice
+      call check( nf90_put_var(ncid, id_lev, nav_lev, [1], [nk_p]))
       call check( nf90_put_var(ncid, id_time_counter, time_counter, start=[1], count=[1]))
       ! keep all time attributes identical as NEMO assigns dateb=datef=time
       call check( nf90_put_var(ncid, id_rdastp, ndastp))
