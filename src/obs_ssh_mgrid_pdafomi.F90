@@ -130,6 +130,7 @@ contains
       integer :: dimids(NF90_MAX_VAR_DIMS)
       integer :: ik, dimlen
       character(len=NF90_MAX_NAME) :: varname, dimname
+      logical :: has_nan
 
       ! *****************************
       ! *** Global setting config ***
@@ -181,11 +182,13 @@ contains
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid) )
       where (ieee_is_nan(obs_global))
-          obs_global = 0.0             !set nan values to zero
+          obs_global = 0             !set nan values to LARGE value so will be ommited
       end where
 
       obs_global = obs_global / 100.0          !divide by 10 to convert from % to fraction
-      write(*,*) minval(obs_global), maxval(obs_global)
+
+      !has_nan = any(ieee_is_nan(obs_global))
+      !write(*,*) minval(obs_global), maxval(obs_global),has_nan,shape(obs_global)
       
 
 
@@ -208,7 +211,7 @@ contains
             ! State vector index counter for observation operator.
             !obs_p(i) = 0.0_pwp
             !*** READING FROM GLOBAL_OBS - BUT IS THIS CORRECT??
-            obs_p(i) = obs_global(wet_pts(2, i), wet_pts(1, i))
+            obs_p(i) = obs_global(wet_pts(2, i), wet_pts(1, i)) !LON 2, LAT 1 (?)
             !if (i == 1) then
 
             !    write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
@@ -226,7 +229,8 @@ contains
             ! Coordinates for observation operator (gridpoint)
             thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
          end do
-         write (*,*) minval(obs_p),maxval(obs_p)
+         has_nan = any(ieee_is_nan(obs_p))
+         write (*,*) 'obs_p:', minval(obs_p),maxval(obs_p),mype_filter,has_nan,shape(obs_p)
 
 
          ! *********************************************************
@@ -270,37 +274,63 @@ contains
    !>The routine is called by all filter processes.
    !>
    subroutine obs_op_ssh_mgrid(dim_p, dim_obs, state_p, ostate)
-
-      use PDAF, only: PDAFomi_obs_op_gridpoint
+      use statevector_pdaf, only: n_fields, sfields
+   !   use PDAF, only: PDAFomi_obs_op_gridpoint
+      use PDAF, only: PDAFomi_gather_obsstate
+      use, intrinsic :: ieee_arithmetic
+      integer :: i
       !> PE-local state dimension
       integer, intent(in) :: dim_p
       !> Dimension of full observed state (all observed fields)
       integer, intent(in) :: dim_obs
       !> PE-local model state
       real(pwp), intent(in) :: state_p(dim_p)
+      real(pwp), allocatable :: ostate_p(:) !local part of state vector
       !> Full observed state
       real(pwp), intent(inout) :: ostate(dim_obs)
+      logical :: has_nan
+      integer :: size_osp
 
       ! ******************************************************
       ! *** Apply observation operator H on a state vector ***
       ! ******************************************************
+      !Just need to pick out the grid cells and then sum over cats
       if (thisobs%doassim == 1) then
-         call PDAFomi_obs_op_gridpoint(thisobs, state_p, ostate)
-      end if
+      
+      size_osp = dim_p/n_fields
+      if (size_osp <1) size_osp = 1 !for when dim_p = 1
+       
+      allocate(ostate_p(size_osp))
+      ostate_p = 0.
+      !if (thisobs%doassim == 1) then
+   
+      if (dim_p > 1) then 
+          do i = 1, n_fields
+          write(*,*) 'field', i, 'name:', trim(sfields(i)%name_rest_n)
+          write(*,*) 'i, off, dim:', i, sfields(i)%off, sfields(i)%dim, &
+               'dim_p:', dim_p, 'dim_obs:', dim_obs
+           if (sfields(i)%name_rest_n == 'a_i') then
+              !write(*,*) 'matched a_i, sum:', sum(state_p(sfields(i)%off+1 : sfields(i)%off + sfields(i)%dim))
+              !ostate_p(:) = ostate_p(:) + state_p(sfields(i)%off:sfields(i)%off + sfields(i)%dim)
+              ostate_p(1:sfields(i)%dim) = ostate_p(1:sfields(i)%dim) + & 
+                  state_p(sfields(i)%off+1 : sfields(i)%off + sfields(i)%dim)
+              !write(*,*) i,state_p(sfields(i)%off:sfields(i)%off + sfields(i)%dim)
+          endif
+         end do
 
+       endif
+         has_nan = any(ieee_is_nan(ostate_p))
+          write(*,*) 'ostate_p', minval(ostate_p),maxval(ostate_p),has_nan,mype_filter
+          CALL PDAFomi_gather_obsstate(thisobs, ostate_p, ostate)
+
+         !call PDAFomi_obs_op_gridpoint(thisobs, state_p, ostate)
+
+     end if
+    
+
+     deallocate(ostate_p)
    end subroutine obs_op_ssh_mgrid
 
-   !>###Initialize local information on the module-type observation
-   !>
-   !>The routine is called during the loop over all local
-   !>analysis domains. It has to initialize the information
-   !>about local ssh observations.
-   !>
-   !>This routine calls the routine `PDAFomi_init_dim_obs_l`
-   !>for each observation type. The call allows to specify a
-   !>different localization radius and localization functions
-   !>for each observation type and local analysis domain.
-   !>
    subroutine init_dim_obs_l_ssh_mgrid(domain_p, step, dim_obs, dim_obs_l)
 
       use PDAF, only: PDAFomi_init_dim_obs_l
