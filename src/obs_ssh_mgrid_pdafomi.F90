@@ -131,6 +131,9 @@ contains
       integer :: ik, dimlen
       character(len=NF90_MAX_NAME) :: varname, dimname
       logical :: has_nan
+      logical :: maytosept = .true.
+
+      maytosept = .true. !#PUT THIS IN THE NAMELIST CONFIG; set there from runscript
 
       ! *****************************
       ! *** Global setting config ***
@@ -182,7 +185,7 @@ contains
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid) )
       where (ieee_is_nan(obs_global))
-          obs_global = 0             !set nan values to LARGE value so will be ommited
+          obs_global = 2e8             !set nan values to LARGE value so will be ommited
       end where
 
       obs_global = obs_global / 100.0          !divide by 10 to convert from % to fraction
@@ -251,7 +254,30 @@ contains
       ! *** Define observation errors for process-local observations ***
       ! ****************************************************************
       ! Set inverse observation error variances
-      ivar_obs_p(:) = 1.0/(rms*rms)
+      if (maytosept) then
+      ivar_obs_p = 0.0000001
+      do i=1,size(obs_p)
+        if ((obs_p(i)) > 1.01) then
+                ivar_obs_p(i) = thisobs%inno_omit!0.0000001 !equivalent to large obs error; will be ignored
+                write(*,*) obs_p(i), ivar_obs_p(i), '**WAS NAN**'
+        else
+                ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
+                write(*,*) obs_p(i), ivar_obs_p(i)
+        endif
+      enddo
+      else
+        ! if oct - apr inc  
+      do i=1,size(obs_p)
+        if (obs_p(i) > 0.8) then
+          ivar_obs_p(i) = 1.0/(0.1*obs_p(i)*0.1*obs_p(i))
+        else
+          ivar_obs_p(i) = 1.0/(0.15*obs_p(i)*0.15*obs_p(i))
+         endif
+      enddo
+      endif
+
+      !ivar_obs_p(:) = 1.0/(rms*rms)
+      
 
       ! ****************************************
       ! *** Gather global observation arrays ***
