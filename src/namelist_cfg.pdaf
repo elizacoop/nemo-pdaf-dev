@@ -2,7 +2,7 @@
 
 &pdaf_nml
   screen = 2
-  dim_ens = 5
+  dim_ens = 19
   filtertype = 7
   subtype = 0
   type_trans = 0
