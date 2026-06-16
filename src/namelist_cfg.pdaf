@@ -161,4 +161,5 @@
   lradius = 20000
   sradius = 20000
   noise_amp = 0.5
+  nc_step = 300
 /

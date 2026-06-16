@@ -44,7 +44,7 @@ module obs_ssh_mgrid_pdafomi
    !> Name of SIC variable in the observation file
    character(lc) :: varname_ssh_mgrid = 'sic'
    !> Time step index to read from the observation file
-   integer :: nc_step = 102 !WILL NEED TO BE ABLE TO LINE THESE UP
+   integer :: nc_step = 10 !WILL NEED TO BE ABLE TO LINE THESE UP
 
    namelist /mgrid_ssh_nml/ assim_ssh_mgrid, use_global_obs, id_sfields, rms, &
                             lradius, sradius, noise_amp, file_ssh_mgrid, &
