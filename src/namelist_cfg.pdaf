@@ -24,8 +24,8 @@
   ! ensemble numbers must be from 1 - N, it cannot have zero paddings.
   ens_prefix = 'ens_'
   ! rest of the path to restart files
-  path_rst_suffix = 'restart_end_ctrl/'
-  f_basename_rst = 'ORCA2_00043800_restart_end_ctrl'
+  path_rst_suffix = 'restart_step0/'
+  f_basename_rst = 'ORCA2_00034848_ens_spin_toend2013'
   ! the parth to increment files is constructed by the following variables
   ! path_asm_root//ens_prefix[1-N]/assim_background_increments_xxxx.nc
   ! path_asm_root//ens_prefix[1-N]/assim_background_state_DI_xxxx.nc
@@ -46,7 +46,7 @@
   sfields(1)%name_incr = 'bckinseaice_cat_1'
   sfields(1)%name_rest_n = 'a_i'
   sfields(1)%name_bkg_din = 'a_i_cat_1'
-  sfields(1)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(1)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   ! Name of field in vertical level direction
   ! 'lev' for vertical levels
   ! or 'cat' for sea ice categories
@@ -72,7 +72,7 @@
   sfields(2)%name_incr = 'bckinseaice_cat_2'
   sfields(2)%name_bkg_din = 'a_i_cat_2'
   sfields(2)%name_rest_n = 'a_i'
-  sfields(2)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(2)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   sfields(2)%k_name = 'cat'
   sfields(2)%operation = 'select_cat_ice'
   sfields(2)%ice_cat = 2
@@ -85,7 +85,7 @@
   sfields(3)%name_incr = 'bckinseaice_cat_3'
   sfields(3)%name_rest_n = 'a_i'
   sfields(3)%name_bkg_din = 'a_i_cat_3'
-  sfields(3)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(3)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   sfields(3)%k_name = 'cat'
   sfields(3)%operation = 'select_cat_ice'
   sfields(3)%ice_cat = 3
@@ -98,7 +98,7 @@
   sfields(4)%name_incr = 'bckinseaice_cat_4'
   sfields(4)%name_rest_n = 'a_i'
   sfields(4)%name_bkg_din = 'a_i_cat_4'
-  sfields(4)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(4)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   sfields(4)%k_name = 'cat'
   sfields(4)%operation = 'select_cat_ice'
   sfields(4)%ice_cat = 4
@@ -111,7 +111,7 @@
   sfields(5)%name_incr = 'bckinseaice_cat_5'
   sfields(5)%name_rest_n = 'a_i'
   sfields(5)%name_bkg_din = 'a_i_cat_5'
-  sfields(5)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(5)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   sfields(5)%k_name = 'cat'
   sfields(5)%operation = 'select_cat_ice'
   sfields(5)%ice_cat = 5
@@ -124,7 +124,7 @@
   sfields(6)%name_incr = 'bckinseaice_cat_6'
   sfields(6)%name_rest_n = 'a_i'
   sfields(6)%name_bkg_din = 'a_i_cat_6'
-  sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(6)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   sfields(6)%k_name = 'cat'
   sfields(6)%operation = 'select_cat_ice'
   sfields(6)%ice_cat = 6
@@ -138,7 +138,7 @@
   !sfields(6)%name_incr = 'bckinsit'
   !sfields(6)%name_rest_n = 'v_i'
   !sfields(6)%name_bkg_din = 'v_i'
-  !sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  !sfields(6)%rst_file = 'ORCA2_00034848_ens_spin_ice_toend2013'
   !sfields(6)%unit = 'm'
   !sfields(6)%operation = 'sum_over_cat_ice'
   !sfields(6)%k_name = 'cat'
@@ -161,5 +161,5 @@
   lradius = 20000
   sradius = 20000
   noise_amp = 0.5
-  nc_step = 300
+  nc_step = 77
 /

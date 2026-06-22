@@ -5,7 +5,7 @@
 #SBATCH --partition=standard
 #SBATCH --qos=short
 #SBATCH --nodes=1
-#SBATCH --ntasks=95
+#SBATCH --ntasks=96
 
 export OMP_NUM_THREADS=1
 
