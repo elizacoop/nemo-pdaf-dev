@@ -71,7 +71,7 @@ contains
       use mod_memcount_pdaf, only: memcount
       use nemo_pdaf, only: i0, j0, ni_p, nj_p, nk_p, nav_lat, nav_lon, nav_lev,&
                            halo0, halo1, time_counter, ndastp
-      use parallel_pdaf, only: mype_model, npes_model, comm_model,MPIerr
+      use parallel_pdaf, only: mype_model, npes_model, comm_model,MPIerr,abort_parallel
       IMPLICIT NONE
       ! Local variables
       character(len=lc) :: fname ! file name
@@ -81,6 +81,7 @@ contains
 
       integer :: dom_size_local(2)
       integer :: dom_pos_first(2)
+      integer :: n_domains
 
       ! Construct restart file path
       call add_slash(path_rst_root)
@@ -104,6 +105,13 @@ contains
       call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_halo_size_start', halo0 ))
       ! dom_pos_first
       call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_halo_size_end', halo1 ))
+      ! total_dom
+      call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_number_total', n_domains ))
+      if (n_domains /= npes_model) then
+         write(*,'(a,2x,a,2x,i0,2x,a,2x,i0)') 'NEMO-PDAF', &
+            'Number of domains in restart file (', n_domains, ') does not match number of processes (', npes_model, ')'
+         call abort_parallel()
+      end if
       !ndastp
       call check(nf90_inq_varid( ncid, 'ndastp', varid ))
       call check(nf90_get_var( ncid, varid, ndastp))
