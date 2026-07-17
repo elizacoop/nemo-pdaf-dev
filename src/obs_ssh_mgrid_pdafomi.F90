@@ -136,7 +136,7 @@ contains
       integer   :: count
       
 
-      maytosept = .false. !#PUT THIS IN THE NAMELIST CONFIG; set there from runscript
+      maytosept = .true. !#PUT THIS IN THE NAMELIST CONFIG; set there from runscript
 
       ! *****************************
       ! *** Global setting config ***
@@ -317,7 +317,7 @@ end do
         !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
         else
                 !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
-                ivar_obs_p(i) = 1.0/(0.2*0.2)
+                ivar_obs_p(i) = 1.0/(0.2*0.2)!(0.2*0.2)
 
                 write(*,*) obs_p(i), ivar_obs_p(i)
         endif
