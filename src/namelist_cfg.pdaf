@@ -35,7 +35,7 @@
 /
 
 &sv_nml
-  n_fields=92
+  n_fields=94
   use_wet_state = 2
   numcat = 6
 /
@@ -1249,6 +1249,26 @@
   sfields(92)%limit = 0
   sfields(92)%max_limit = 1000
   sfields(92)%min_limit = 0
+
+  sfields(93)%ndims = 3
+  sfields(93)%variable = 'sn'
+  sfields(93)%name_incr = 'bckinsn'
+  sfields(93)%name_rest_n = 'sn'
+  sfields(93)%name_bkg_din = 'sn'
+  sfields(93)%rst_file = 'ORCA2_00000384_ens_step24'
+  sfields(93)%k_name = 'lev'
+  sfields(93)%operation = ''
+  sfields(93)%limit = 0
+
+  sfields(94)%ndims = 3
+  sfields(94)%variable = 'tn'
+  sfields(94)%name_incr = 'bckintn'
+  sfields(94)%name_rest_n = 'tn'
+  sfields(94)%name_bkg_din = 'tn'
+  sfields(94)%rst_file = 'ORCA2_00000384_ens_step24'
+  sfields(94)%k_name = 'lev'
+  sfields(94)%operation = ''
+  sfields(94)%limit = 0
 
   !sfields(6)%ndims = 2
   !sfields(6)%variable = 'volume'
