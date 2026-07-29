@@ -187,14 +187,14 @@ contains
       cnt = (/jpiglo, jpjglo, 1/)
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid))
-      write(*,*) 'obs_global shape:', shape(obs_global)
-write(*,*) 'obs_global min/max:', minval(obs_global), maxval(obs_global)
-write(*,*) 'jpiglo, jpjglo:', jpiglo, jpjglo
-do i = 1, min(5, nwet)
-   write(*,*) 'wet_pts(1,2):', wet_pts(1,i), wet_pts(2,i), &
-               'obs_global(1,2):', obs_global(wet_pts(1,i), wet_pts(2,i)), &
-               'obs_global(2,1):', obs_global(wet_pts(2,i), wet_pts(1,i))
-end do
+      !write(*,*) 'obs_global shape:', shape(obs_global)
+      !write(*,*) 'obs_global min/max:', minval(obs_global), maxval(obs_global)
+      !write(*,*) 'jpiglo, jpjglo:', jpiglo, jpjglo
+      !do i = 1, min(5, nwet)
+      !write(*,*) 'wet_pts(1,2):', wet_pts(1,i), wet_pts(2,i), &
+      !         'obs_global(1,2):', obs_global(wet_pts(1,i), wet_pts(2,i)), &
+      !         'obs_global(2,1):', obs_global(wet_pts(2,i), wet_pts(1,i))
+      !end do
 
 
 
@@ -311,7 +311,7 @@ end do
         if ((obs_p(i)) < 0.) then
                 obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
                 ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
-                write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
+        !        write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
         !else if ((obs_p(i) == 0.0)) then
         !        ivar_obs_p(i) = 1.0/(0.2*0.01*0.02*0.01)  !so we don't get infinity for zero
         !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
@@ -319,7 +319,7 @@ end do
                 !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
                 ivar_obs_p(i) = 1.0/(0.2*0.2)!(0.2*0.2)
 
-                write(*,*) obs_p(i), ivar_obs_p(i)
+        !        write(*,*) obs_p(i), ivar_obs_p(i)
         endif
       enddo
       else
@@ -418,22 +418,22 @@ end do
 
       !*COMPARISON
          ! Compare obs with Hx
-   if (mype_filter == 0) then
-      write(*,*) 'NEMO-PDAF --- obs vs Hx comparison:'
-      do i = 1, size(thisobs%obs_f)
-      if (thisobs%obs_f(i) /= 0.0_pwp .or. &
-          ostate(i) /= 0.0_pwp) then
-         write(*,'(a,4x,a,i5,3(a,f12.6))') 'NEMO-PDAF', &
-            'i=', i, &
-            '  obs=', thisobs%obs_f(i), &
-            '  Hx=', ostate(i), &
-            '  innov=', thisobs%obs_f(i) - ostate(i), &
-            '  ivar=', thisobs%ivar_obs_f(i), &
-           '  lon=', thisobs%ocoord_f(1,i)/(3.141592653589793/180.0), &
-           '  lat=', thisobs%ocoord_f(2,i)/(3.141592653589793/180.0)
-      endif
-      end do
-   end if
+      !if (mype_filter == 0) then
+      !write(*,*) 'NEMO-PDAF --- obs vs Hx comparison:'
+      !do i = 1, size(thisobs%obs_f)
+      !if (thisobs%obs_f(i) /= 0.0_pwp .or. &
+      !    ostate(i) /= 0.0_pwp) then
+      !   write(*,'(a,4x,a,i5,3(a,f12.6))') 'NEMO-PDAF', &
+      !      'i=', i, &
+      !      '  obs=', thisobs%obs_f(i), &
+      !      '  Hx=', ostate(i), &
+      !      '  innov=', thisobs%obs_f(i) - ostate(i), &
+      !      '  ivar=', thisobs%ivar_obs_f(i), &
+      !     '  lon=', thisobs%ocoord_f(1,i)/(3.141592653589793/180.0), &
+      !     '  lat=', thisobs%ocoord_f(2,i)/(3.141592653589793/180.0)
+      !endif
+      !end do
+      !end if
 
 
 
