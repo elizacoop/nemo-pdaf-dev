@@ -39,9 +39,16 @@ module obs_ssh_mgrid_pdafomi
    real(pwp) :: sradius = 1.0
    !> Standard deviation for Gaussian noise in twin experiment
    real(pwp) :: noise_amp = 1
+   !> path to obs file
+   character(lc) :: file_ssh_mgrid = 'ssh_obs.nc'
+   !> Name of SIC variable in the observation file
+   character(lc) :: varname_ssh_mgrid = 'sic'
+   !> Time step index to read from the observation file
+   integer :: nc_step = 10 !WILL NEED TO BE ABLE TO LINE THESE UP
 
    namelist /mgrid_ssh_nml/ assim_ssh_mgrid, use_global_obs, id_sfields, rms, &
-                            lradius, sradius, noise_amp
+                            lradius, sradius, noise_amp, file_ssh_mgrid, &
+                            nc_step, varname_ssh_mgrid
 
    !> Instance of full observation data type - see `PDAFomi` for details.
    type(obs_f), target, public :: thisobs
@@ -61,6 +68,9 @@ contains
           write (*, '(a,5x,a,f12.4)') 'NEMO-PDAF', 'noise_amp      ', noise_amp
           write (*, '(a,5x,a,es12.4)') 'NEMO-PDAF','lradius        ', lradius
           write (*, '(a,5x,a,es12.4)') 'NEMO-PDAF','sradius        ', sradius
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'obs_file   ', trim(file_ssh_mgrid)
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'varname', trim(varname_ssh_mgrid)
+          write (*, '(a,5x,a,i0)')   'NEMO-PDAF', 'nc_step          ', nc_step
       end if
    end subroutine print_ssh_mgrid_configuration
 
@@ -99,17 +109,34 @@ contains
    subroutine init_dim_obs_ssh_mgrid(step, dim_obs)
       use PDAF, only: PDAFomi_gather_obs
       use statevector_pdaf, only: sfields
-      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit
+      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit,jpiglo,jpjglo
+      use io_pdaf, only: check
+      use, intrinsic :: ieee_arithmetic ! to detect Nans
 
       integer, intent(in)    :: step    !< Current time step
       integer, intent(inout) :: dim_obs !< Dimension of full observation vector
 
       integer :: i                             !> Counters
       integer :: dim_obs_p                     !> Number of process-local observations
+      integer :: ncid, id_var
+      integer :: pos(3), cnt(3)         
       real(pwp), allocatable :: obs_p(:)       !> PE-local observation vector
+
       real(pwp), allocatable :: ivar_obs_p(:)  !> PE-local inverse observation error variance
       real(pwp), allocatable :: ocoord_p(:, :) !> PE-local observation coordinates
       real(pwp) :: rad_conv = 3.141592653589793/180.0 !> Degree to radian conversion
+      real(pwp), allocatable :: obs_global(:,:) !< Global obs field read from file
+      integer :: ndims, natts, xtype
+      integer :: dimids(NF90_MAX_VAR_DIMS)
+      integer :: ik, dimlen
+      character(len=NF90_MAX_NAME) :: varname, dimname
+      logical :: has_nan
+      logical :: maytosept = .true.
+      real(pwp) :: obs_threshold = 0.0   ! default catches fill values
+      integer   :: count
+      
+
+      maytosept = .true. !#PUT THIS IN THE NAMELIST CONFIG; set there from runscript
 
       ! *****************************
       ! *** Global setting config ***
@@ -127,12 +154,67 @@ contains
       ! Set to use limited full observations
       thisobs%use_global_obs = use_global_obs
       ! Omit large innovation to omit nwet = 0 points
-      thisobs%inno_omit = 1e6
+      thisobs%inno_omit = 3!1e6    ! nwet= 0 points will have obs = 0? but no corresponding model state(?)
+      
+      ! **********************************
+      ! *** Read observations from file ***
+      ! **********************************
+      if (mype_filter == 0) then
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- obs file: ', trim(file_ssh_mgrid)
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- variable: ', trim(varname_ssh_mgrid)
+         write (*, '(a,4x,a,i0)') 'NEMO-PDAF', '--- reading nc_step: ', nc_step
+      end if
+
+      allocate(obs_global(jpiglo, jpjglo)) !180 X 148
+      obs_global = -1
+      call check( nf90_open(trim(file_ssh_mgrid), NF90_NOWRITE, ncid) )
+      call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
+      call check( nf90_inq_varid(ncid, trim(varname_ssh_mgrid), id_var) )
+      
+      call check( nf90_inquire_variable(ncid, id_var, name=varname, xtype=xtype, &
+                                 ndims=ndims, dimids=dimids, natts=natts) )
+
+      print *, 'Variable:', trim(varname)
+      print *, 'Number of dimensions:', ndims
+
+      ! Loop over dimensions in the order Fortran sees them to check same as ens
+      do ik = 1, ndims
+         call check( nf90_inquire_dimension(ncid, dimids(ik), name=dimname, len=dimlen) )
+         print *, 'Dim', ik, ':', trim(dimname), ' size =', dimlen
+      end do
+
+      pos = (/1, 1, nc_step/)
+      cnt = (/jpiglo, jpjglo, 1/)
+      call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
+      call check( nf90_close(ncid))
+      !write(*,*) 'obs_global shape:', shape(obs_global)
+      !write(*,*) 'obs_global min/max:', minval(obs_global), maxval(obs_global)
+      !write(*,*) 'jpiglo, jpjglo:', jpiglo, jpjglo
+      !do i = 1, min(5, nwet)
+      !write(*,*) 'wet_pts(1,2):', wet_pts(1,i), wet_pts(2,i), &
+      !         'obs_global(1,2):', obs_global(wet_pts(1,i), wet_pts(2,i)), &
+      !         'obs_global(2,1):', obs_global(wet_pts(2,i), wet_pts(1,i))
+      !end do
+
+
+
+
+      where (ieee_is_nan(obs_global))
+          obs_global = -100.0            !set nan values to negative no., then filter out
+      end where
+
+      obs_global = obs_global / 100.0          !divide by 10 to convert from % to fraction
+
+      !has_nan = any(ieee_is_nan(obs_global))
+      !write(*,*) minval(obs_global), maxval(obs_global),has_nan,shape(obs_global)
+      
+
+
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
       ! *** and initialize index and coordinate arrays.         ***
       ! ***********************************************************
-      ! Set number of local observations
+      !Set number of local observations
       dim_obs_p = nwet
       if (dim_obs_p > 0) then
          ! Vector of observations on the process sub-domain
@@ -142,32 +224,124 @@ contains
          ! Coordinate array for observation operator
          allocate (thisobs%id_obs_p(1, dim_obs_p))
          allocate (ivar_obs_p(dim_obs_p))
+         obs_p = -1
          do i = 1, nwet
             ! State vector index counter for observation operator.
             obs_p(i) = 0.0_pwp
+            !*** READING FROM GLOBAL_OBS - BUT IS THIS CORRECT??
+            obs_p(i) = obs_global(wet_pts(1, i), wet_pts(2, i)) !LON 2, LAT 1 (?)
+            !if (i == 1) then
+
+            !    write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
+            !    write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
+            !endif
+            ! if (i == nwet) then
+            !      write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
+            !      write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
+
+             !endif
+           !write(*,*)
             ! Observation coordinates - must be in radians for PDAFOMI
-            ocoord_p(1, i) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
-            ocoord_p(2, i) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
-            ! Coordinates for observation operator (gridpoint)
-            thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
-         end do
+           ocoord_p(1, i) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
+           ocoord_p(2, i) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
+           ! Coordinates for observation operator (gridpoint)
+           thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
+        end do
+     !!    has_nan = any(ieee_is_nan(obs_p))
+     !!  write (*,*) 'obs_p:', minval(obs_p),maxval(obs_p),mype_filter,has_nan,shape(obs_p)
+
+
          ! *********************************************************
          ! *** For twin experiment: Read synthetic observations  ***
          ! *********************************************************
-         call add_noise(dim_obs_p, obs_p)
+         !call add_noise(dim_obs_p, obs_p) DON'T WANT TO DO THIS - need to read in WHOLE OBS
+
+            ! First pass: count valid observationsabove zero
+      !dim_obs_p = 0
+      !do i = 1, nwet
+      !   if (obs_global(wet_pts(2, i), wet_pts(1, i)) > obs_threshold) then
+      !      dim_obs_p = dim_obs_p + 1
+      !   end if
+      !end do
+
+      !if (dim_obs_p > 0) then
+         ! Vector of observations on the process sub-domain
+      !   allocate (obs_p(dim_obs_p))
+         ! Coordinate array of observations on the process sub-domain
+      !   allocate (ocoord_p(2, dim_obs_p))
+         ! Coordinate array for observation operator
+      !   allocate (thisobs%id_obs_p(1, dim_obs_p))
+      !   allocate (ivar_obs_p(dim_obs_p))
+
+         ! Second pass: fill arrays with valid observations only
+      !   count = 0
+      !   do i = 1, nwet
+      !      if (obs_global(wet_pts(2, i), wet_pts(1, i)) > obs_threshold) then
+      !         count = count + 1
+      !         write(*,*) wet_pts(2, i), wet_pts(1, i),obs_global(wet_pts(2, i), wet_pts(1, i))
+      !         obs_p(count) = obs_global(wet_pts(2, i), wet_pts(1, i))
+               ! Observation coordinates - must be in radians for PDAFOMI
+      !         ocoord_p(1, count) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
+      !         ocoord_p(2, count) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
+               ! Coordinates for observation operator (gridpoint)
+      !         thisobs%id_obs_p(1, count) = i + sfields(id_sfields)%off
+               !thisobs%id_obs_p(1, count) = count + sfields(id_sfields)%off
+      !      end if
+      !   end do
+
+         !has_nan = any(ieee_is_nan(obs_p))
+         !write (*,*) 'obs_p:', minval(obs_p), maxval(obs_p), mype_filter, has_nan, shape(obs_p)
       else
          ! Set empty arrays if no local observations
-         allocate (obs_p(1))
-         obs_p(1) = thisobs%inno_omit
-         allocate (ocoord_p(2, 1))
-         allocate (thisobs%id_obs_p(1, 1))
-         allocate (ivar_obs_p(1))
+        allocate (obs_p(1))
+        obs_p(1) = -1.0! so that gets LARGE obs error applied thisobs%inno_omit
+        allocate (ocoord_p(2, 1))
+        allocate (thisobs%id_obs_p(1, 1))
+        allocate (ivar_obs_p(1))
       end if
+      deallocate(obs_global)
+
       ! ****************************************************************
       ! *** Define observation errors for process-local observations ***
       ! ****************************************************************
       ! Set inverse observation error variances
-      ivar_obs_p(:) = 1.0/(rms*rms)
+      if (maytosept) then
+      ivar_obs_p = 1.0e-12 
+      do i=1,size(obs_p)
+        if ((obs_p(i)) < 0.) then
+                obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
+                ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
+        !        write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
+        !else if ((obs_p(i) == 0.0)) then
+        !        ivar_obs_p(i) = 1.0/(0.2*0.01*0.02*0.01)  !so we don't get infinity for zero
+        !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
+        else
+                !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
+                ivar_obs_p(i) = 1.0/(0.2*0.2)!(0.2*0.2)
+
+        !        write(*,*) obs_p(i), ivar_obs_p(i)
+        endif
+      enddo
+      else
+        ! if oct - apr inc  
+      ivar_obs_p = 1.0e-12
+      do i=1,size(obs_p)
+        if ((obs_p(i)) < 0.) then
+                obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
+                ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
+               !!* write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
+        else if (obs_p(i) > 0.8) then
+          ivar_obs_p(i) = 1.0/(0.1*0.1)
+          !write(*,*) ivar_obs_p(i), 'std:', 0.1*obs_p(i)
+        else
+          ivar_obs_p(i) = 1.0/(0.15*0.15)
+           !write(*,*) ivar_obs_p(i), 'std::', 0.15*obs_p(i)
+         endif
+      enddo
+      endif
+
+      !ivar_obs_p(:) = 1.0/(rms*rms)
+      
 
       ! ****************************************
       ! *** Gather global observation arrays ***
@@ -190,37 +364,87 @@ contains
    !>The routine is called by all filter processes.
    !>
    subroutine obs_op_ssh_mgrid(dim_p, dim_obs, state_p, ostate)
-
-      use PDAF, only: PDAFomi_obs_op_gridpoint
+      use statevector_pdaf, only: n_fields, sfields
+   !   use PDAF, only: PDAFomi_obs_op_gridpoint
+      use PDAF, only: PDAFomi_gather_obsstate
+      use parallel_pdaf, only: mype_filter
+      use, intrinsic :: ieee_arithmetic
+      integer :: i
       !> PE-local state dimension
       integer, intent(in) :: dim_p
       !> Dimension of full observed state (all observed fields)
       integer, intent(in) :: dim_obs
       !> PE-local model state
       real(pwp), intent(in) :: state_p(dim_p)
+      real(pwp), allocatable :: ostate_p(:) !local part of state vector
       !> Full observed state
       real(pwp), intent(inout) :: ostate(dim_obs)
+      logical :: has_nan
+      integer :: size_osp
 
       ! ******************************************************
       ! *** Apply observation operator H on a state vector ***
       ! ******************************************************
+      !Just need to pick out the grid cells and then sum over cats
       if (thisobs%doassim == 1) then
-         call PDAFomi_obs_op_gridpoint(thisobs, state_p, ostate)
-      end if
+      
+      size_osp = dim_p/n_fields
+      if (size_osp <1) size_osp = 1 !for when dim_p = 1
+       
+      allocate(ostate_p(size_osp))
+      ostate_p = 0.
+      !if (thisobs%doassim == 1) then
+   
+      if (dim_p > 1) then 
+          do i = 1, n_fields
+          !write(*,*) 'field', i, 'name:', trim(sfields(i)%name_rest_n)
+          !write(*,*) 'i, off, dim:', i, sfields(i)%off, sfields(i)%dim, &
+          !     'dim_p:', dim_p, 'dim_obs:', dim_obs
+           if (sfields(i)%name_rest_n == 'a_i') then
+              !write(*,*) 'matched a_i, sum:', sum(state_p(sfields(i)%off+1 : sfields(i)%off + sfields(i)%dim))
+              !ostate_p(:) = ostate_p(:) + state_p(sfields(i)%off:sfields(i)%off + sfields(i)%dim)
+              ostate_p(1:sfields(i)%dim) = ostate_p(1:sfields(i)%dim) + & 
+                  state_p(sfields(i)%off+1 : sfields(i)%off + sfields(i)%dim)
+              !write(*,*) i,state_p(sfields(i)%off:sfields(i)%off + sfields(i)%dim)
+          endif
+         end do
 
+       endif
+         has_nan = any(ieee_is_nan(ostate_p))
+         !!* write(*,*) 'ostate_p', minval(ostate_p),maxval(ostate_p),has_nan,mype_filter
+          CALL PDAFomi_gather_obsstate(thisobs, ostate_p, ostate)
+
+         !call PDAFomi_obs_op_gridpoint(thisobs, state_p, ostate)
+
+      !*COMPARISON
+         ! Compare obs with Hx
+      !if (mype_filter == 0) then
+      !write(*,*) 'NEMO-PDAF --- obs vs Hx comparison:'
+      !do i = 1, size(thisobs%obs_f)
+      !if (thisobs%obs_f(i) /= 0.0_pwp .or. &
+      !    ostate(i) /= 0.0_pwp) then
+      !   write(*,'(a,4x,a,i5,3(a,f12.6))') 'NEMO-PDAF', &
+      !      'i=', i, &
+      !      '  obs=', thisobs%obs_f(i), &
+      !      '  Hx=', ostate(i), &
+      !      '  innov=', thisobs%obs_f(i) - ostate(i), &
+      !      '  ivar=', thisobs%ivar_obs_f(i), &
+      !     '  lon=', thisobs%ocoord_f(1,i)/(3.141592653589793/180.0), &
+      !     '  lat=', thisobs%ocoord_f(2,i)/(3.141592653589793/180.0)
+      !endif
+      !end do
+      !end if
+
+
+
+
+
+     end if
+    
+
+     deallocate(ostate_p)
    end subroutine obs_op_ssh_mgrid
 
-   !>###Initialize local information on the module-type observation
-   !>
-   !>The routine is called during the loop over all local
-   !>analysis domains. It has to initialize the information
-   !>about local ssh observations.
-   !>
-   !>This routine calls the routine `PDAFomi_init_dim_obs_l`
-   !>for each observation type. The call allows to specify a
-   !>different localization radius and localization functions
-   !>for each observation type and local analysis domain.
-   !>
    subroutine init_dim_obs_l_ssh_mgrid(domain_p, step, dim_obs, dim_obs_l)
 
       use PDAF, only: PDAFomi_init_dim_obs_l

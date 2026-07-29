@@ -1,0 +1,165 @@
+! Namelist file for PDAF configuration
+
+&pdaf_nml
+  screen = 2
+  dim_ens = 19
+  filtertype = 7
+  subtype = 0
+  type_trans = 0
+  type_sqrt = 0
+  type_forget = 0
+  forget = 0.8
+  locweight = 2
+/
+
+&io_nml
+  verbose_io = 2
+  sgldbl_io = 'dbl'
+  path_dom = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/EXP00_template_rundir/'
+  fname_dom = 'ORCA_R2_zps_domcfg.nc'
+  ! the parth to restart files is constructed by the following variables
+  ! path_rst_root//ens_prefix[1-N]//path_rst_suffix//f_basename_rst_000x.nc
+  path_rst_root = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/'
+  ! ensemble prefix
+  ! ensemble numbers must be from 1 - N, it cannot have zero paddings.
+  ens_prefix = 'ens_'
+  ! rest of the path to restart files
+  path_rst_suffix = 'restart_end_ctrl/'
+  f_basename_rst = 'ORCA2_00043800_restart_end_ctrl'
+  ! the parth to increment files is constructed by the following variables
+  ! path_asm_root//ens_prefix[1-N]/assim_background_increments_xxxx.nc
+  ! path_asm_root//ens_prefix[1-N]/assim_background_state_DI_xxxx.nc
+  path_asm_root = '/work/n01/n01/elicoo/CRISP_NEMO_PDAF/CRISP_NEMO_PDAF_1/nemo_5.0.1/cfgs/exp-build-notop/'
+  ! initial time of day in hhmm
+  nn_time0 = 0
+/
+
+&sv_nml
+  n_fields=6
+  use_wet_state = 2
+  numcat = 6
+/
+
+&sfields_nml
+  sfields(1)%ndims = 2
+  sfields(1)%variable = 'area_cat_1'
+  sfields(1)%name_incr = 'bckinseaice_cat_1'
+  sfields(1)%name_rest_n = 'a_i'
+  sfields(1)%name_bkg_din = 'a_i_cat_1'
+  sfields(1)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  ! Name of field in vertical level direction
+  ! 'lev' for vertical levels
+  ! or 'cat' for sea ice categories
+  ! luckily, all variables with numcat
+  ! dimension seem to be 2D.
+  ! This could be different for other sea ice models.
+  ! but let's keep it the case for now.
+  sfields(1)%k_name = 'cat'
+  ! operations to form state vector
+  ! 'sum_over_cat_ice': summation over sea ice categories
+  ! 'select_cat_ice': selection of a specific sea ice category
+  sfields(1)%operation = 'select_cat_ice'
+  !< sea ice category to select if operation is 'select_cat_ice'
+  sfields(1)%ice_cat = 1
+  ! These limit seems to be treated directly by ASMINC,
+  ! so we may just use limit = 0?
+  sfields(1)%limit = 3
+  sfields(1)%max_limit = 1
+  sfields(1)%min_limit = 0
+
+  sfields(2)%ndims = 2
+  sfields(2)%variable = 'area_cat_2'
+  sfields(2)%name_incr = 'bckinseaice_cat_2'
+  sfields(2)%name_bkg_din = 'a_i_cat_2'
+  sfields(2)%name_rest_n = 'a_i'
+  sfields(2)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(2)%k_name = 'cat'
+  sfields(2)%operation = 'select_cat_ice'
+  sfields(2)%ice_cat = 2
+  sfields(2)%limit = 3
+  sfields(2)%max_limit = 1
+  sfields(2)%min_limit = 0
+
+  sfields(3)%ndims = 2
+  sfields(3)%variable = 'area_cat_3'
+  sfields(3)%name_incr = 'bckinseaice_cat_3'
+  sfields(3)%name_rest_n = 'a_i'
+  sfields(3)%name_bkg_din = 'a_i_cat_3'
+  sfields(3)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(3)%k_name = 'cat'
+  sfields(3)%operation = 'select_cat_ice'
+  sfields(3)%ice_cat = 3
+  sfields(3)%limit = 3
+  sfields(3)%max_limit = 1
+  sfields(3)%min_limit = 0
+
+  sfields(4)%ndims = 2
+  sfields(4)%variable = 'area_cat_4'
+  sfields(4)%name_incr = 'bckinseaice_cat_4'
+  sfields(4)%name_rest_n = 'a_i'
+  sfields(4)%name_bkg_din = 'a_i_cat_4'
+  sfields(4)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(4)%k_name = 'cat'
+  sfields(4)%operation = 'select_cat_ice'
+  sfields(4)%ice_cat = 4
+  sfields(4)%limit = 3
+  sfields(4)%max_limit = 1
+  sfields(4)%min_limit = 0
+
+  sfields(5)%ndims = 2
+  sfields(5)%variable = 'area_cat_5'
+  sfields(5)%name_incr = 'bckinseaice_cat_5'
+  sfields(5)%name_rest_n = 'a_i'
+  sfields(5)%name_bkg_din = 'a_i_cat_5'
+  sfields(5)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(5)%k_name = 'cat'
+  sfields(5)%operation = 'select_cat_ice'
+  sfields(5)%ice_cat = 5
+  sfields(5)%limit = 3
+  sfields(5)%max_limit = 1
+  sfields(5)%min_limit = 0
+
+  sfields(6)%ndims = 2
+  sfields(6)%variable = 'area_cat_6'
+  sfields(6)%name_incr = 'bckinseaice_cat_6'
+  sfields(6)%name_rest_n = 'a_i'
+  sfields(6)%name_bkg_din = 'a_i_cat_6'
+  sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  sfields(6)%k_name = 'cat'
+  sfields(6)%operation = 'select_cat_ice'
+  sfields(6)%ice_cat = 6
+  sfields(6)%limit = 3
+  sfields(6)%max_limit = 1
+  sfields(6)%min_limit = 0
+
+
+  !sfields(6)%ndims = 2
+  !sfields(6)%variable = 'volume'
+  !sfields(6)%name_incr = 'bckinsit'
+  !sfields(6)%name_rest_n = 'v_i'
+  !sfields(6)%name_bkg_din = 'v_i'
+  !sfields(6)%rst_file = 'ORCA2_00043800_restart_ice_end_ctrl'
+  !sfields(6)%unit = 'm'
+  !sfields(6)%operation = 'sum_over_cat_ice'
+  !sfields(6)%k_name = 'cat'
+  !sfields(6)%transform = 0
+  !sfields(6)%trafo_shift = 0.0
+  !! These limit seems to be treated directly by ASMINC,
+  !! so we may just use limit = 0?
+  !sfields(6)%limit = 1
+  !sfields(6)%min_limit = 0.000001
+/
+
+&mgrid_ssh_nml
+  assim_ssh_mgrid = .true.
+  varname_ssh_mgrid = 'sea_ice_concentration' !! this is time=308,y=148,x=180, vals 0-100
+  file_ssh_mgrid = '/work/n01/n01/elicoo/observations/data_v3_2010-2023.nc'
+  use_global_obs = 1
+  ! this is the index of obs. in sfields for fake obs.
+  id_sfields = 1
+  rms = 0.5
+  lradius = 20000
+  sradius = 20000
+  noise_amp = 0.5
+  nc_step = 300
+/

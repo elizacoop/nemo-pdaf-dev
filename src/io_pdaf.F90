@@ -71,7 +71,7 @@ contains
       use mod_memcount_pdaf, only: memcount
       use nemo_pdaf, only: i0, j0, ni_p, nj_p, nk_p, nav_lat, nav_lon, nav_lev,&
                            halo0, halo1, time_counter, ndastp
-      use parallel_pdaf, only: mype_model, npes_model, comm_model,MPIerr
+      use parallel_pdaf, only: mype_model, npes_model, comm_model,MPIerr,abort_parallel
       IMPLICIT NONE
       ! Local variables
       character(len=lc) :: fname ! file name
@@ -81,6 +81,7 @@ contains
 
       integer :: dom_size_local(2)
       integer :: dom_pos_first(2)
+      integer :: n_domains
 
       ! Construct restart file path
       call add_slash(path_rst_root)
@@ -104,6 +105,13 @@ contains
       call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_halo_size_start', halo0 ))
       ! dom_pos_first
       call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_halo_size_end', halo1 ))
+      ! total_dom
+      call check(nf90_get_att( ncid, NF90_GLOBAL, 'DOMAIN_number_total', n_domains ))
+      if (n_domains /= npes_model) then
+         write(*,'(a,2x,a,2x,i0,2x,a,2x,i0)') 'NEMO-PDAF', &
+            'Number of domains in restart file (', n_domains, ') does not match number of processes (', npes_model, ')'
+         call abort_parallel()
+      end if
       !ndastp
       call check(nf90_inq_varid( ncid, 'ndastp', varid ))
       call check(nf90_get_var( ncid, varid, ndastp))
@@ -428,11 +436,11 @@ contains
                                'BOX'))
 
       ! define dimensions for NEMO-input file
-      call check( NF90_DEF_DIM(ncid,'t', NF90_UNLIMITED, dimid_time))
       ! define spatial dimensions
-      call check( NF90_DEF_DIM(ncid, 'z', nk_p, dimid_lvls))
-      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
       call check( NF90_DEF_DIM(ncid, 'x', ni_p, dimid_lon) )
+      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
+      call check( NF90_DEF_DIM(ncid, 'nav_lev', nk_p, dimid_lvls))
+      call check( NF90_DEF_DIM(ncid,'time_counter', NF90_UNLIMITED, dimid_time))
 
       dimids_field=[dimid_lon, dimid_lat, dimid_lvls, dimid_time]
       ! define variables
@@ -581,16 +589,16 @@ contains
                                'BOX'))
 
       ! define dimensions for NEMO-input file
-      call check( NF90_DEF_DIM(ncid,'t', NF90_UNLIMITED, dimid_time))
       ! define spatial dimensions
-      call check( NF90_DEF_DIM(ncid, 'z', nk_p, dimid_lvls))
-      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
       call check( NF90_DEF_DIM(ncid, 'x', ni_p, dimid_lon) )
+      call check( NF90_DEF_DIM(ncid, 'y', nj_p, dimid_lat) )
+      call check( NF90_DEF_DIM(ncid, 'nav_lev', nk_p, dimid_lvls))
+      call check( NF90_DEF_DIM(ncid,'time_counter', NF90_UNLIMITED, dimid_time))
 
       dimids_field=[dimid_lon, dimid_lat, dimid_lvls, dimid_time]
       ! define variables
       call check( NF90_DEF_VAR(ncid, 'rdastp', NF90_DOUBLE, id_rdastp))
-      call check( NF90_DEF_VAR(ncid, 'time_counter', NF90_DOUBLE, id_time_counter))
+      call check( NF90_DEF_VAR(ncid, 'time_counter', NF90_DOUBLE, dimid_time, id_time_counter))
       call check( NF90_DEF_VAR(ncid, 'nav_lat', NF90_FLOAT, dimids_field(1:2), id_lat))
       call check( NF90_DEF_VAR(ncid, 'nav_lon', NF90_FLOAT, dimids_field(1:2), id_lon))
       call check( NF90_DEF_VAR(ncid, 'nav_lev', NF90_FLOAT, dimids_field(3), id_lev))
