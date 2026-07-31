@@ -439,10 +439,11 @@ contains
 
 
 
-     end if
+     
     
 
      deallocate(ostate_p)
+     end if
    end subroutine obs_op_ssh_mgrid
 
    subroutine init_dim_obs_l_ssh_mgrid(domain_p, step, dim_obs, dim_obs_l)

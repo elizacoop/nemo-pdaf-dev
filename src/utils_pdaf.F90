@@ -112,6 +112,7 @@ contains
       use config_pdaf, only: pdaf_nml
       use io_pdaf, only: io_nml, add_slash
       use obs_ssh_mgrid_pdafomi, only: mgrid_ssh_nml
+      use obs_sit_mgrid_pdafomi, only: mgrid_sit_nml
       use statevector_pdaf, only: sv_nml
       ! ****************************************************
       ! ***   Initialize PDAF parameters from namelist   ***
@@ -125,7 +126,10 @@ contains
       read (20, NML=sv_nml)
       rewind(20)
       read(20, NML=mgrid_ssh_nml)
+      rewind (20)
+      read(20, NML=mgrid_sit_nml)
       close (20)
+
    end subroutine read_config_pdaf
 
    subroutine print_config()
@@ -133,12 +137,14 @@ contains
       use config_pdaf, only: print_pdaf_configuration
       use io_pdaf, only: print_io_configuration
       use obs_ssh_mgrid_pdafomi, only: print_ssh_mgrid_configuration
+      use obs_sit_mgrid_pdafomi, only: print_sit_mgrid_configuration
       ! Print PDAF parameters to screen
       showconf: if (mype_ens == 0) then
          write (*, '(/a,1x,a)') 'NEMO-PDAF','-- Overview of PDAF configuration --'
          call print_pdaf_configuration()
          call print_io_configuration()
          call print_ssh_mgrid_configuration()
+         call print_sit_mgrid_configuration()
          write (*, '(a,1x,a/)') 'NEMO-PDAF','-- End of PDAF configuration overview --'
       end if showconf
    end subroutine print_config
