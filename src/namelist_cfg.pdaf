@@ -24,8 +24,8 @@
   ! ensemble numbers must be from 1 - N, it cannot have zero paddings.
   ens_prefix = 'ens_'
   ! rest of the path to restart files
-  path_rst_suffix = 'restart_step3/'
-  f_basename_rst = 'ORCA2_00000360_ens_step3'
+  path_rst_suffix = 'restart_step24/'
+  f_basename_rst = 'ORCA2_00000384_ens_step24'
   ! the parth to increment files is constructed by the following variables
   ! path_asm_root//ens_prefix[1-N]/assim_background_increments_xxxx.nc
   ! path_asm_root//ens_prefix[1-N]/assim_background_state_DI_xxxx.nc
@@ -46,7 +46,7 @@
   sfields(1)%name_incr = 'bckinseaice_cat_1'
   sfields(1)%name_rest_n = 'a_i'
   sfields(1)%name_bkg_din = 'a_i_cat_1'
-  sfields(1)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(1)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   ! Name of field in vertical level direction
   ! 'lev' for vertical levels
   ! or 'cat' for sea ice categories
@@ -72,7 +72,7 @@
   sfields(2)%name_incr = 'bckinseaice_cat_2'
   sfields(2)%name_bkg_din = 'a_i_cat_2'
   sfields(2)%name_rest_n = 'a_i'
-  sfields(2)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(2)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(2)%k_name = 'cat'
   sfields(2)%operation = 'select_cat_ice'
   sfields(2)%ice_cat = 2
@@ -85,7 +85,7 @@
   sfields(3)%name_incr = 'bckinseaice_cat_3'
   sfields(3)%name_rest_n = 'a_i'
   sfields(3)%name_bkg_din = 'a_i_cat_3'
-  sfields(3)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(3)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(3)%k_name = 'cat'
   sfields(3)%operation = 'select_cat_ice'
   sfields(3)%ice_cat = 3
@@ -98,7 +98,7 @@
   sfields(4)%name_incr = 'bckinseaice_cat_4'
   sfields(4)%name_rest_n = 'a_i'
   sfields(4)%name_bkg_din = 'a_i_cat_4'
-  sfields(4)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(4)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(4)%k_name = 'cat'
   sfields(4)%operation = 'select_cat_ice'
   sfields(4)%ice_cat = 4
@@ -111,7 +111,7 @@
   sfields(5)%name_incr = 'bckinseaice_cat_5'
   sfields(5)%name_rest_n = 'a_i'
   sfields(5)%name_bkg_din = 'a_i_cat_5'
-  sfields(5)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(5)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(5)%k_name = 'cat'
   sfields(5)%operation = 'select_cat_ice'
   sfields(5)%ice_cat = 5
@@ -124,7 +124,7 @@
   sfields(6)%name_incr = 'bckinseaice_cat_6'
   sfields(6)%name_rest_n = 'a_i'
   sfields(6)%name_bkg_din = 'a_i_cat_6'
-  sfields(6)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(6)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(6)%k_name = 'cat'
   sfields(6)%operation = 'select_cat_ice'
   sfields(6)%ice_cat = 6
@@ -137,7 +137,7 @@
   sfields(7)%name_incr = 'bckinicevol_cat_1'
   sfields(7)%name_rest_n = 'v_i'
   sfields(7)%name_bkg_din = 'v_i_cat_1'
-  sfields(7)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(7)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(7)%k_name = 'cat'
   sfields(7)%operation = 'select_cat_ice'
   sfields(7)%ice_cat = 1
@@ -150,7 +150,7 @@
   sfields(8)%name_incr = 'bckinicevol_cat_2'
   sfields(8)%name_rest_n = 'v_i'
   sfields(8)%name_bkg_din = 'v_i_cat_2'
-  sfields(8)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(8)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(8)%k_name = 'cat'
   sfields(8)%operation = 'select_cat_ice'
   sfields(8)%ice_cat = 2
@@ -163,7 +163,7 @@
   sfields(9)%name_incr = 'bckinicevol_cat_3'
   sfields(9)%name_rest_n = 'v_i'
   sfields(9)%name_bkg_din = 'v_i_cat_3'
-  sfields(9)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(9)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(9)%k_name = 'cat'
   sfields(9)%operation = 'select_cat_ice'
   sfields(9)%ice_cat = 3
@@ -176,7 +176,7 @@
   sfields(10)%name_incr = 'bckinicevol_cat_4'
   sfields(10)%name_rest_n = 'v_i'
   sfields(10)%name_bkg_din = 'v_i_cat_4'
-  sfields(10)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(10)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(10)%k_name = 'cat'
   sfields(10)%operation = 'select_cat_ice'
   sfields(10)%ice_cat = 4
@@ -189,7 +189,7 @@
   sfields(11)%name_incr = 'bckinicevol_cat_5'
   sfields(11)%name_rest_n = 'v_i'
   sfields(11)%name_bkg_din = 'v_i_cat_5'
-  sfields(11)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(11)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(11)%k_name = 'cat'
   sfields(11)%operation = 'select_cat_ice'
   sfields(11)%ice_cat = 5
@@ -202,7 +202,7 @@
   sfields(12)%name_incr = 'bckinicevol_cat_6'
   sfields(12)%name_rest_n = 'v_i'
   sfields(12)%name_bkg_din = 'v_i_cat_6'
-  sfields(12)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(12)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(12)%k_name = 'cat'
   sfields(12)%operation = 'select_cat_ice'
   sfields(12)%ice_cat = 6
@@ -215,7 +215,7 @@
   sfields(13)%name_incr = 'bckinsist_cat_1'
   sfields(13)%name_rest_n = 't_su'
   sfields(13)%name_bkg_din = 't_su_cat_1'
-  sfields(13)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(13)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(13)%k_name = 'cat'
   sfields(13)%operation = 'select_cat_ice'
   sfields(13)%ice_cat = 1
@@ -228,7 +228,7 @@
   sfields(14)%name_incr = 'bckinsist_cat_2'
   sfields(14)%name_rest_n = 't_su'
   sfields(14)%name_bkg_din = 't_su_cat_2'
-  sfields(14)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(14)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(14)%k_name = 'cat'
   sfields(14)%operation = 'select_cat_ice'
   sfields(14)%ice_cat = 2
@@ -241,7 +241,7 @@
   sfields(15)%name_incr = 'bckinsist_cat_3'
   sfields(15)%name_rest_n = 't_su'
   sfields(15)%name_bkg_din = 't_su_cat_3'
-  sfields(15)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(15)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(15)%k_name = 'cat'
   sfields(15)%operation = 'select_cat_ice'
   sfields(15)%ice_cat = 3
@@ -254,7 +254,7 @@
   sfields(16)%name_incr = 'bckinsist_cat_4'
   sfields(16)%name_rest_n = 't_su'
   sfields(16)%name_bkg_din = 't_su_cat_4'
-  sfields(16)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(16)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(16)%k_name = 'cat'
   sfields(16)%operation = 'select_cat_ice'
   sfields(16)%ice_cat = 4
@@ -267,7 +267,7 @@
   sfields(17)%name_incr = 'bckinsist_cat_5'
   sfields(17)%name_rest_n = 't_su'
   sfields(17)%name_bkg_din = 't_su_cat_5'
-  sfields(17)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(17)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(17)%k_name = 'cat'
   sfields(17)%operation = 'select_cat_ice'
   sfields(17)%ice_cat = 5
@@ -280,7 +280,7 @@
   sfields(18)%name_incr = 'bckinsist_cat_6'
   sfields(18)%name_rest_n = 't_su'
   sfields(18)%name_bkg_din = 't_su_cat_6'
-  sfields(18)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(18)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(18)%k_name = 'cat'
   sfields(18)%operation = 'select_cat_ice'
   sfields(18)%ice_cat = 6
@@ -293,7 +293,7 @@
   sfields(19)%name_incr = 'bckinsnvol_cat_1'
   sfields(19)%name_rest_n = 'v_s'
   sfields(19)%name_bkg_din = 'v_s_cat_1'
-  sfields(19)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(19)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(19)%k_name = 'cat'
   sfields(19)%operation = 'select_cat_ice'
   sfields(19)%ice_cat = 1
@@ -306,7 +306,7 @@
   sfields(20)%name_incr = 'bckinsnvol_cat_2'
   sfields(20)%name_rest_n = 'v_s'
   sfields(20)%name_bkg_din = 'v_s_cat_2'
-  sfields(20)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(20)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(20)%k_name = 'cat'
   sfields(20)%operation = 'select_cat_ice'
   sfields(20)%ice_cat = 2
@@ -319,7 +319,7 @@
   sfields(21)%name_incr = 'bckinsnvol_cat_3'
   sfields(21)%name_rest_n = 'v_s'
   sfields(21)%name_bkg_din = 'v_s_cat_3'
-  sfields(21)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(21)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(21)%k_name = 'cat'
   sfields(21)%operation = 'select_cat_ice'
   sfields(21)%ice_cat = 3
@@ -332,7 +332,7 @@
   sfields(22)%name_incr = 'bckinsnvol_cat_4'
   sfields(22)%name_rest_n = 'v_s'
   sfields(22)%name_bkg_din = 'v_s_cat_4'
-  sfields(22)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(22)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(22)%k_name = 'cat'
   sfields(22)%operation = 'select_cat_ice'
   sfields(22)%ice_cat = 4
@@ -345,7 +345,7 @@
   sfields(23)%name_incr = 'bckinsnvol_cat_5'
   sfields(23)%name_rest_n = 'v_s'
   sfields(23)%name_bkg_din = 'v_s_cat_5'
-  sfields(23)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(23)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(23)%k_name = 'cat'
   sfields(23)%operation = 'select_cat_ice'
   sfields(23)%ice_cat = 5
@@ -358,7 +358,7 @@
   sfields(24)%name_incr = 'bckinsnvol_cat_6'
   sfields(24)%name_rest_n = 'v_s'
   sfields(24)%name_bkg_din = 'v_s_cat_6'
-  sfields(24)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(24)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(24)%k_name = 'cat'
   sfields(24)%operation = 'select_cat_ice'
   sfields(24)%ice_cat = 6
@@ -371,7 +371,7 @@
   sfields(25)%name_incr = 'bckinaip_cat_1'
   sfields(25)%name_rest_n = 'a_ip'
   sfields(25)%name_bkg_din = 'a_ip_cat_1'
-  sfields(25)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(25)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(25)%k_name = 'cat'
   sfields(25)%operation = 'select_cat_ice'
   sfields(25)%ice_cat = 1
@@ -384,7 +384,7 @@
   sfields(26)%name_incr = 'bckinaip_cat_2'
   sfields(26)%name_rest_n = 'a_ip'
   sfields(26)%name_bkg_din = 'a_ip_cat_2'
-  sfields(26)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(26)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(26)%k_name = 'cat'
   sfields(26)%operation = 'select_cat_ice'
   sfields(26)%ice_cat = 2
@@ -397,7 +397,7 @@
   sfields(27)%name_incr = 'bckinaip_cat_3'
   sfields(27)%name_rest_n = 'a_ip'
   sfields(27)%name_bkg_din = 'a_ip_cat_3'
-  sfields(27)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(27)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(27)%k_name = 'cat'
   sfields(27)%operation = 'select_cat_ice'
   sfields(27)%ice_cat = 3
@@ -410,7 +410,7 @@
   sfields(28)%name_incr = 'bckinaip_cat_4'
   sfields(28)%name_rest_n = 'a_ip'
   sfields(28)%name_bkg_din = 'a_ip_cat_4'
-  sfields(28)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(28)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(28)%k_name = 'cat'
   sfields(28)%operation = 'select_cat_ice'
   sfields(28)%ice_cat = 4
@@ -423,7 +423,7 @@
   sfields(29)%name_incr = 'bckinaip_cat_5'
   sfields(29)%name_rest_n = 'a_ip'
   sfields(29)%name_bkg_din = 'a_ip_cat_5'
-  sfields(29)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(29)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(29)%k_name = 'cat'
   sfields(29)%operation = 'select_cat_ice'
   sfields(29)%ice_cat = 5
@@ -436,7 +436,7 @@
   sfields(30)%name_incr = 'bckinaip_cat_6'
   sfields(30)%name_rest_n = 'a_ip'
   sfields(30)%name_bkg_din = 'a_ip_cat_6'
-  sfields(30)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(30)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(30)%k_name = 'cat'
   sfields(30)%operation = 'select_cat_ice'
   sfields(30)%ice_cat = 6
@@ -449,7 +449,7 @@
   sfields(31)%name_incr = 'bckinvip_cat_1'
   sfields(31)%name_rest_n = 'v_ip'
   sfields(31)%name_bkg_din = 'v_ip_cat_1'
-  sfields(31)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(31)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(31)%k_name = 'cat'
   sfields(31)%operation = 'select_cat_ice'
   sfields(31)%ice_cat = 1
@@ -462,7 +462,7 @@
   sfields(32)%name_incr = 'bckinvip_cat_2'
   sfields(32)%name_rest_n = 'v_ip'
   sfields(32)%name_bkg_din = 'v_ip_cat_2'
-  sfields(32)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(32)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(32)%k_name = 'cat'
   sfields(32)%operation = 'select_cat_ice'
   sfields(32)%ice_cat = 2
@@ -475,7 +475,7 @@
   sfields(33)%name_incr = 'bckinvip_cat_3'
   sfields(33)%name_rest_n = 'v_ip'
   sfields(33)%name_bkg_din = 'v_ip_cat_3'
-  sfields(33)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(33)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(33)%k_name = 'cat'
   sfields(33)%operation = 'select_cat_ice'
   sfields(33)%ice_cat = 3
@@ -488,7 +488,7 @@
   sfields(34)%name_incr = 'bckinvip_cat_4'
   sfields(34)%name_rest_n = 'v_ip'
   sfields(34)%name_bkg_din = 'v_ip_cat_4'
-  sfields(34)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(34)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(34)%k_name = 'cat'
   sfields(34)%operation = 'select_cat_ice'
   sfields(34)%ice_cat = 4
@@ -501,7 +501,7 @@
   sfields(35)%name_incr = 'bckinvip_cat_5'
   sfields(35)%name_rest_n = 'v_ip'
   sfields(35)%name_bkg_din = 'v_ip_cat_5'
-  sfields(35)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(35)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(35)%k_name = 'cat'
   sfields(35)%operation = 'select_cat_ice'
   sfields(35)%ice_cat = 5
@@ -514,7 +514,7 @@
   sfields(36)%name_incr = 'bckinvip_cat_6'
   sfields(36)%name_rest_n = 'v_ip'
   sfields(36)%name_bkg_din = 'v_ip_cat_6'
-  sfields(36)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(36)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(36)%k_name = 'cat'
   sfields(36)%operation = 'select_cat_ice'
   sfields(36)%ice_cat = 6
@@ -527,7 +527,7 @@
   sfields(37)%name_incr = 'bckinvil_cat_1'
   sfields(37)%name_rest_n = 'v_il'
   sfields(37)%name_bkg_din = 'v_il_cat_1'
-  sfields(37)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(37)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(37)%k_name = 'cat'
   sfields(37)%operation = 'select_cat_ice'
   sfields(37)%ice_cat = 1
@@ -540,7 +540,7 @@
   sfields(38)%name_incr = 'bckinvil_cat_2'
   sfields(38)%name_rest_n = 'v_il'
   sfields(38)%name_bkg_din = 'v_il_cat_2'
-  sfields(38)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(38)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(38)%k_name = 'cat'
   sfields(38)%operation = 'select_cat_ice'
   sfields(38)%ice_cat = 2
@@ -553,7 +553,7 @@
   sfields(39)%name_incr = 'bckinvil_cat_3'
   sfields(39)%name_rest_n = 'v_il'
   sfields(39)%name_bkg_din = 'v_il_cat_3'
-  sfields(39)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(39)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(39)%k_name = 'cat'
   sfields(39)%operation = 'select_cat_ice'
   sfields(39)%ice_cat = 3
@@ -566,7 +566,7 @@
   sfields(40)%name_incr = 'bckinvil_cat_4'
   sfields(40)%name_rest_n = 'v_il'
   sfields(40)%name_bkg_din = 'v_il_cat_4'
-  sfields(40)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(40)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(40)%k_name = 'cat'
   sfields(40)%operation = 'select_cat_ice'
   sfields(40)%ice_cat = 4
@@ -579,7 +579,7 @@
   sfields(41)%name_incr = 'bckinvil_cat_5'
   sfields(41)%name_rest_n = 'v_il'
   sfields(41)%name_bkg_din = 'v_il_cat_5'
-  sfields(41)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(41)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(41)%k_name = 'cat'
   sfields(41)%operation = 'select_cat_ice'
   sfields(41)%ice_cat = 5
@@ -592,7 +592,7 @@
   sfields(42)%name_incr = 'bckinvil_cat_6'
   sfields(42)%name_rest_n = 'v_il'
   sfields(42)%name_bkg_din = 'v_il_cat_6'
-  sfields(42)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(42)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(42)%k_name = 'cat'
   sfields(42)%operation = 'select_cat_ice'
   sfields(42)%ice_cat = 6
@@ -605,7 +605,7 @@
   sfields(43)%name_incr = 'bckines1_cat_1'
   sfields(43)%name_rest_n = 'e_s_l01'
   sfields(43)%name_bkg_din = 'e_s_l01_cat_1'
-  sfields(43)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(43)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(43)%k_name = 'cat'
   sfields(43)%operation = 'select_cat_ice'
   sfields(43)%ice_cat = 1
@@ -618,7 +618,7 @@
   sfields(44)%name_incr = 'bckines1_cat_2'
   sfields(44)%name_rest_n = 'e_s_l01'
   sfields(44)%name_bkg_din = 'e_s_l01_cat_2'
-  sfields(44)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(44)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(44)%k_name = 'cat'
   sfields(44)%operation = 'select_cat_ice'
   sfields(44)%ice_cat = 2
@@ -631,7 +631,7 @@
   sfields(45)%name_incr = 'bckines1_cat_3'
   sfields(45)%name_rest_n = 'e_s_l01'
   sfields(45)%name_bkg_din = 'e_s_l01_cat_3'
-  sfields(45)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(45)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(45)%k_name = 'cat'
   sfields(45)%operation = 'select_cat_ice'
   sfields(45)%ice_cat = 3
@@ -644,7 +644,7 @@
   sfields(46)%name_incr = 'bckines1_cat_4'
   sfields(46)%name_rest_n = 'e_s_l01'
   sfields(46)%name_bkg_din = 'e_s_l01_cat_4'
-  sfields(46)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(46)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(46)%k_name = 'cat'
   sfields(46)%operation = 'select_cat_ice'
   sfields(46)%ice_cat = 4
@@ -657,7 +657,7 @@
   sfields(47)%name_incr = 'bckines1_cat_5'
   sfields(47)%name_rest_n = 'e_s_l01'
   sfields(47)%name_bkg_din = 'e_s_l01_cat_5'
-  sfields(47)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(47)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(47)%k_name = 'cat'
   sfields(47)%operation = 'select_cat_ice'
   sfields(47)%ice_cat = 5
@@ -670,7 +670,7 @@
   sfields(48)%name_incr = 'bckines1_cat_6'
   sfields(48)%name_rest_n = 'e_s_l01'
   sfields(48)%name_bkg_din = 'e_s_l01_cat_6'
-  sfields(48)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(48)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(48)%k_name = 'cat'
   sfields(48)%operation = 'select_cat_ice'
   sfields(48)%ice_cat = 6
@@ -683,7 +683,7 @@
   sfields(49)%name_incr = 'bckines2_cat_1'
   sfields(49)%name_rest_n = 'e_s_l02'
   sfields(49)%name_bkg_din = 'e_s_l02_cat_1'
-  sfields(49)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(49)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(49)%k_name = 'cat'
   sfields(49)%operation = 'select_cat_ice'
   sfields(49)%ice_cat = 1
@@ -696,7 +696,7 @@
   sfields(50)%name_incr = 'bckines2_cat_2'
   sfields(50)%name_rest_n = 'e_s_l02'
   sfields(50)%name_bkg_din = 'e_s_l02_cat_2'
-  sfields(50)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(50)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(50)%k_name = 'cat'
   sfields(50)%operation = 'select_cat_ice'
   sfields(50)%ice_cat = 2
@@ -709,7 +709,7 @@
   sfields(51)%name_incr = 'bckines2_cat_3'
   sfields(51)%name_rest_n = 'e_s_l02'
   sfields(51)%name_bkg_din = 'e_s_l02_cat_3'
-  sfields(51)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(51)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(51)%k_name = 'cat'
   sfields(51)%operation = 'select_cat_ice'
   sfields(51)%ice_cat = 3
@@ -722,7 +722,7 @@
   sfields(52)%name_incr = 'bckines2_cat_4'
   sfields(52)%name_rest_n = 'e_s_l02'
   sfields(52)%name_bkg_din = 'e_s_l02_cat_4'
-  sfields(52)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(52)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(52)%k_name = 'cat'
   sfields(52)%operation = 'select_cat_ice'
   sfields(52)%ice_cat = 4
@@ -735,7 +735,7 @@
   sfields(53)%name_incr = 'bckines2_cat_5'
   sfields(53)%name_rest_n = 'e_s_l02'
   sfields(53)%name_bkg_din = 'e_s_l02_cat_5'
-  sfields(53)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(53)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(53)%k_name = 'cat'
   sfields(53)%operation = 'select_cat_ice'
   sfields(53)%ice_cat = 5
@@ -748,7 +748,7 @@
   sfields(54)%name_incr = 'bckines2_cat_6'
   sfields(54)%name_rest_n = 'e_s_l02'
   sfields(54)%name_bkg_din = 'e_s_l02_cat_6'
-  sfields(54)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(54)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(54)%k_name = 'cat'
   sfields(54)%operation = 'select_cat_ice'
   sfields(54)%ice_cat = 6
@@ -761,7 +761,7 @@
   sfields(55)%name_incr = 'bckines3_cat_1'
   sfields(55)%name_rest_n = 'e_s_l03'
   sfields(55)%name_bkg_din = 'e_s_l03_cat_1'
-  sfields(55)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(55)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(55)%k_name = 'cat'
   sfields(55)%operation = 'select_cat_ice'
   sfields(55)%ice_cat = 1
@@ -774,7 +774,7 @@
   sfields(56)%name_incr = 'bckines3_cat_2'
   sfields(56)%name_rest_n = 'e_s_l03'
   sfields(56)%name_bkg_din = 'e_s_l03_cat_2'
-  sfields(56)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(56)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(56)%k_name = 'cat'
   sfields(56)%operation = 'select_cat_ice'
   sfields(56)%ice_cat = 2
@@ -787,7 +787,7 @@
   sfields(57)%name_incr = 'bckines3_cat_3'
   sfields(57)%name_rest_n = 'e_s_l03'
   sfields(57)%name_bkg_din = 'e_s_l03_cat_3'
-  sfields(57)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(57)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(57)%k_name = 'cat'
   sfields(57)%operation = 'select_cat_ice'
   sfields(57)%ice_cat = 3
@@ -800,7 +800,7 @@
   sfields(58)%name_incr = 'bckines3_cat_4'
   sfields(58)%name_rest_n = 'e_s_l03'
   sfields(58)%name_bkg_din = 'e_s_l03_cat_4'
-  sfields(58)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(58)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(58)%k_name = 'cat'
   sfields(58)%operation = 'select_cat_ice'
   sfields(58)%ice_cat = 4
@@ -813,7 +813,7 @@
   sfields(59)%name_incr = 'bckines3_cat_5'
   sfields(59)%name_rest_n = 'e_s_l03'
   sfields(59)%name_bkg_din = 'e_s_l03_cat_5'
-  sfields(59)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(59)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(59)%k_name = 'cat'
   sfields(59)%operation = 'select_cat_ice'
   sfields(59)%ice_cat = 5
@@ -826,7 +826,7 @@
   sfields(60)%name_incr = 'bckines3_cat_6'
   sfields(60)%name_rest_n = 'e_s_l03'
   sfields(60)%name_bkg_din = 'e_s_l03_cat_6'
-  sfields(60)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(60)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(60)%k_name = 'cat'
   sfields(60)%operation = 'select_cat_ice'
   sfields(60)%ice_cat = 6
@@ -839,7 +839,7 @@
   sfields(61)%name_incr = 'bckinei1_cat_1'
   sfields(61)%name_rest_n = 'e_i_l01'
   sfields(61)%name_bkg_din = 'e_i_l01_cat_1'
-  sfields(61)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(61)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(61)%k_name = 'cat'
   sfields(61)%operation = 'select_cat_ice'
   sfields(61)%ice_cat = 1
@@ -852,7 +852,7 @@
   sfields(62)%name_incr = 'bckinei1_cat_2'
   sfields(62)%name_rest_n = 'e_i_l01'
   sfields(62)%name_bkg_din = 'e_i_l01_cat_2'
-  sfields(62)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(62)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(62)%k_name = 'cat'
   sfields(62)%operation = 'select_cat_ice'
   sfields(62)%ice_cat = 2
@@ -865,7 +865,7 @@
   sfields(63)%name_incr = 'bckinei1_cat_3'
   sfields(63)%name_rest_n = 'e_i_l01'
   sfields(63)%name_bkg_din = 'e_i_l01_cat_3'
-  sfields(63)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(63)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(63)%k_name = 'cat'
   sfields(63)%operation = 'select_cat_ice'
   sfields(63)%ice_cat = 3
@@ -878,7 +878,7 @@
   sfields(64)%name_incr = 'bckinei1_cat_4'
   sfields(64)%name_rest_n = 'e_i_l01'
   sfields(64)%name_bkg_din = 'e_i_l01_cat_4'
-  sfields(64)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(64)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(64)%k_name = 'cat'
   sfields(64)%operation = 'select_cat_ice'
   sfields(64)%ice_cat = 4
@@ -891,7 +891,7 @@
   sfields(65)%name_incr = 'bckinei1_cat_5'
   sfields(65)%name_rest_n = 'e_i_l01'
   sfields(65)%name_bkg_din = 'e_i_l01_cat_5'
-  sfields(65)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(65)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(65)%k_name = 'cat'
   sfields(65)%operation = 'select_cat_ice'
   sfields(65)%ice_cat = 5
@@ -904,7 +904,7 @@
   sfields(66)%name_incr = 'bckinei1_cat_6'
   sfields(66)%name_rest_n = 'e_i_l01'
   sfields(66)%name_bkg_din = 'e_i_l01_cat_6'
-  sfields(66)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(66)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(66)%k_name = 'cat'
   sfields(66)%operation = 'select_cat_ice'
   sfields(66)%ice_cat = 6
@@ -917,7 +917,7 @@
   sfields(67)%name_incr = 'bckinei2_cat_1'
   sfields(67)%name_rest_n = 'e_i_l02'
   sfields(67)%name_bkg_din = 'e_i_l02_cat_1'
-  sfields(67)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(67)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(67)%k_name = 'cat'
   sfields(67)%operation = 'select_cat_ice'
   sfields(67)%ice_cat = 1
@@ -930,7 +930,7 @@
   sfields(68)%name_incr = 'bckinei2_cat_2'
   sfields(68)%name_rest_n = 'e_i_l02'
   sfields(68)%name_bkg_din = 'e_i_l02_cat_2'
-  sfields(68)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(68)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(68)%k_name = 'cat'
   sfields(68)%operation = 'select_cat_ice'
   sfields(68)%ice_cat = 2
@@ -943,7 +943,7 @@
   sfields(69)%name_incr = 'bckinei2_cat_3'
   sfields(69)%name_rest_n = 'e_i_l02'
   sfields(69)%name_bkg_din = 'e_i_l02_cat_3'
-  sfields(69)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(69)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(69)%k_name = 'cat'
   sfields(69)%operation = 'select_cat_ice'
   sfields(69)%ice_cat = 3
@@ -956,7 +956,7 @@
   sfields(70)%name_incr = 'bckinei2_cat_4'
   sfields(70)%name_rest_n = 'e_i_l02'
   sfields(70)%name_bkg_din = 'e_i_l02_cat_4'
-  sfields(70)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(70)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(70)%k_name = 'cat'
   sfields(70)%operation = 'select_cat_ice'
   sfields(70)%ice_cat = 4
@@ -969,7 +969,7 @@
   sfields(71)%name_incr = 'bckinei2_cat_5'
   sfields(71)%name_rest_n = 'e_i_l02'
   sfields(71)%name_bkg_din = 'e_i_l02_cat_5'
-  sfields(71)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(71)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(71)%k_name = 'cat'
   sfields(71)%operation = 'select_cat_ice'
   sfields(71)%ice_cat = 5
@@ -982,7 +982,7 @@
   sfields(72)%name_incr = 'bckinei2_cat_6'
   sfields(72)%name_rest_n = 'e_i_l02'
   sfields(72)%name_bkg_din = 'e_i_l02_cat_6'
-  sfields(72)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(72)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(72)%k_name = 'cat'
   sfields(72)%operation = 'select_cat_ice'
   sfields(72)%ice_cat = 6
@@ -995,7 +995,7 @@
   sfields(73)%name_incr = 'bckinei3_cat_1'
   sfields(73)%name_rest_n = 'e_i_l03'
   sfields(73)%name_bkg_din = 'e_i_l03_cat_1'
-  sfields(73)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(73)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(73)%k_name = 'cat'
   sfields(73)%operation = 'select_cat_ice'
   sfields(73)%ice_cat = 1
@@ -1008,7 +1008,7 @@
   sfields(74)%name_incr = 'bckinei3_cat_2'
   sfields(74)%name_rest_n = 'e_i_l03'
   sfields(74)%name_bkg_din = 'e_i_l03_cat_2'
-  sfields(74)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(74)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(74)%k_name = 'cat'
   sfields(74)%operation = 'select_cat_ice'
   sfields(74)%ice_cat = 2
@@ -1021,7 +1021,7 @@
   sfields(75)%name_incr = 'bckinei3_cat_3'
   sfields(75)%name_rest_n = 'e_i_l03'
   sfields(75)%name_bkg_din = 'e_i_l03_cat_3'
-  sfields(75)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(75)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(75)%k_name = 'cat'
   sfields(75)%operation = 'select_cat_ice'
   sfields(75)%ice_cat = 3
@@ -1034,7 +1034,7 @@
   sfields(76)%name_incr = 'bckinei3_cat_4'
   sfields(76)%name_rest_n = 'e_i_l03'
   sfields(76)%name_bkg_din = 'e_i_l03_cat_4'
-  sfields(76)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(76)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(76)%k_name = 'cat'
   sfields(76)%operation = 'select_cat_ice'
   sfields(76)%ice_cat = 4
@@ -1047,7 +1047,7 @@
   sfields(77)%name_incr = 'bckinei3_cat_5'
   sfields(77)%name_rest_n = 'e_i_l03'
   sfields(77)%name_bkg_din = 'e_i_l03_cat_5'
-  sfields(77)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(77)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(77)%k_name = 'cat'
   sfields(77)%operation = 'select_cat_ice'
   sfields(77)%ice_cat = 5
@@ -1060,7 +1060,7 @@
   sfields(78)%name_incr = 'bckinei3_cat_6'
   sfields(78)%name_rest_n = 'e_i_l03'
   sfields(78)%name_bkg_din = 'e_i_l03_cat_6'
-  sfields(78)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(78)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(78)%k_name = 'cat'
   sfields(78)%operation = 'select_cat_ice'
   sfields(78)%ice_cat = 6
@@ -1073,7 +1073,7 @@
   sfields(79)%name_incr = 'bckinei4_cat_1'
   sfields(79)%name_rest_n = 'e_i_l04'
   sfields(79)%name_bkg_din = 'e_i_l04_cat_1'
-  sfields(79)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(79)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(79)%k_name = 'cat'
   sfields(79)%operation = 'select_cat_ice'
   sfields(79)%ice_cat = 1
@@ -1086,7 +1086,7 @@
   sfields(80)%name_incr = 'bckinei4_cat_2'
   sfields(80)%name_rest_n = 'e_i_l04'
   sfields(80)%name_bkg_din = 'e_i_l04_cat_2'
-  sfields(80)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(80)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(80)%k_name = 'cat'
   sfields(80)%operation = 'select_cat_ice'
   sfields(80)%ice_cat = 2
@@ -1099,7 +1099,7 @@
   sfields(81)%name_incr = 'bckinei4_cat_3'
   sfields(81)%name_rest_n = 'e_i_l04'
   sfields(81)%name_bkg_din = 'e_i_l04_cat_3'
-  sfields(81)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(81)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(81)%k_name = 'cat'
   sfields(81)%operation = 'select_cat_ice'
   sfields(81)%ice_cat = 3
@@ -1112,7 +1112,7 @@
   sfields(82)%name_incr = 'bckinei4_cat_4'
   sfields(82)%name_rest_n = 'e_i_l04'
   sfields(82)%name_bkg_din = 'e_i_l04_cat_4'
-  sfields(82)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(82)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(82)%k_name = 'cat'
   sfields(82)%operation = 'select_cat_ice'
   sfields(82)%ice_cat = 4
@@ -1125,7 +1125,7 @@
   sfields(83)%name_incr = 'bckinei4_cat_5'
   sfields(83)%name_rest_n = 'e_i_l04'
   sfields(83)%name_bkg_din = 'e_i_l04_cat_5'
-  sfields(83)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(83)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(83)%k_name = 'cat'
   sfields(83)%operation = 'select_cat_ice'
   sfields(83)%ice_cat = 5
@@ -1138,7 +1138,7 @@
   sfields(84)%name_incr = 'bckinei4_cat_6'
   sfields(84)%name_rest_n = 'e_i_l04'
   sfields(84)%name_bkg_din = 'e_i_l04_cat_6'
-  sfields(84)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(84)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(84)%k_name = 'cat'
   sfields(84)%operation = 'select_cat_ice'
   sfields(84)%ice_cat = 6
@@ -1151,7 +1151,7 @@
   sfields(85)%name_incr = 'bckinei5_cat_1'
   sfields(85)%name_rest_n = 'e_i_l05'
   sfields(85)%name_bkg_din = 'e_i_l05_cat_1'
-  sfields(85)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(85)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(85)%k_name = 'cat'
   sfields(85)%operation = 'select_cat_ice'
   sfields(85)%ice_cat = 1
@@ -1164,7 +1164,7 @@
   sfields(86)%name_incr = 'bckinei5_cat_2'
   sfields(86)%name_rest_n = 'e_i_l05'
   sfields(86)%name_bkg_din = 'e_i_l05_cat_2'
-  sfields(86)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(86)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(86)%k_name = 'cat'
   sfields(86)%operation = 'select_cat_ice'
   sfields(86)%ice_cat = 2
@@ -1177,7 +1177,7 @@
   sfields(87)%name_incr = 'bckinei5_cat_3'
   sfields(87)%name_rest_n = 'e_i_l05'
   sfields(87)%name_bkg_din = 'e_i_l05_cat_3'
-  sfields(87)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(87)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(87)%k_name = 'cat'
   sfields(87)%operation = 'select_cat_ice'
   sfields(87)%ice_cat = 3
@@ -1190,7 +1190,7 @@
   sfields(88)%name_incr = 'bckinei5_cat_4'
   sfields(88)%name_rest_n = 'e_i_l05'
   sfields(88)%name_bkg_din = 'e_i_l05_cat_4'
-  sfields(88)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(88)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(88)%k_name = 'cat'
   sfields(88)%operation = 'select_cat_ice'
   sfields(88)%ice_cat = 4
@@ -1203,7 +1203,7 @@
   sfields(89)%name_incr = 'bckinei5_cat_5'
   sfields(89)%name_rest_n = 'e_i_l05'
   sfields(89)%name_bkg_din = 'e_i_l05_cat_5'
-  sfields(89)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(89)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(89)%k_name = 'cat'
   sfields(89)%operation = 'select_cat_ice'
   sfields(89)%ice_cat = 5
@@ -1216,7 +1216,7 @@
   sfields(90)%name_incr = 'bckinei5_cat_6'
   sfields(90)%name_rest_n = 'e_i_l05'
   sfields(90)%name_bkg_din = 'e_i_l05_cat_6'
-  sfields(90)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(90)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(90)%k_name = 'cat'
   sfields(90)%operation = 'select_cat_ice'
   sfields(90)%ice_cat = 6
@@ -1229,7 +1229,7 @@
   sfields(91)%name_incr = 'bckinuice'
   sfields(91)%name_rest_n = 'u_ice'
   sfields(91)%name_bkg_din = 'u_ice'
-  sfields(91)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(91)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(91)%k_name = 'cat'
   sfields(91)%operation = ''
   !!sfields(91)%ice_cat = 6
@@ -1242,7 +1242,7 @@
   sfields(92)%name_incr = 'bckinvice'
   sfields(92)%name_rest_n = 'v_ice'
   sfields(92)%name_bkg_din = 'v_ice'
-  sfields(92)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  sfields(92)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   sfields(92)%k_name = 'cat'
   sfields(92)%operation = ''
   !!sfields(92)%ice_cat = 6
@@ -1255,7 +1255,7 @@
   sfields(93)%name_incr = 'bckinsn'
   sfields(93)%name_rest_n = 'sn'
   sfields(93)%name_bkg_din = 'sn'
-  sfields(93)%rst_file = 'ORCA2_00000360_ens_step3'
+  sfields(93)%rst_file = 'ORCA2_00000384_ens_step24'
   sfields(93)%k_name = 'lev'
   sfields(93)%operation = ''
   sfields(93)%limit = 0
@@ -1265,7 +1265,7 @@
   sfields(94)%name_incr = 'bckintn'
   sfields(94)%name_rest_n = 'tn'
   sfields(94)%name_bkg_din = 'tn'
-  sfields(94)%rst_file = 'ORCA2_00000360_ens_step3'
+  sfields(94)%rst_file = 'ORCA2_00000384_ens_step24'
   sfields(94)%k_name = 'lev'
   sfields(94)%operation = ''
   sfields(94)%limit = 0
@@ -1275,7 +1275,7 @@
   !sfields(6)%name_incr = 'bckinsit'
   !sfields(6)%name_rest_n = 'v_i'
   !sfields(6)%name_bkg_din = 'v_i'
-  !sfields(6)%rst_file = 'ORCA2_00000360_ens_ice_step3'
+  !sfields(6)%rst_file = 'ORCA2_00000384_ens_ice_step24'
   !sfields(6)%unit = 'm'
   !sfields(6)%operation = 'sum_over_cat_ice'
   !sfields(6)%k_name = 'cat'
@@ -1295,10 +1295,10 @@
   ! this is the index of obs. in sfields for fake obs.
   !id_sfields = 1
   rms = 0.5
-  lradius = 20000
-  sradius = 20000
+  lradius = 100000
+  sradius = 100000
   noise_amp = 0.5
-  nc_step = 80
+  nc_step = 101
 /
 
 &mgrid_sit_nml
@@ -1309,9 +1309,9 @@
   ! this is the index of obs. in sfields for fake obs.
   !id_sfields = 1
   rms = 0.5
-  lradius = 20000
-  sradius = 20000
+  lradius = 100000
+  sradius = 100000
   noise_amp = 0.5
-  nc_step = 80
+  nc_step = 101
 /
 
