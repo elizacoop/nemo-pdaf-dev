@@ -316,11 +316,11 @@ contains
         !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
         else if (obs_p(i) > 0. .and. obs_p(i) < 1.) then
                 !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
-                ivar_obs_p(i) = 1.0/(0.1*0.1*obs_p(i)*obs_p(i)) !100* obs error here
+                ivar_obs_p(i) = 1.0/(obs_p(i)*obs_p(i)) !100* obs error here
         else if ((obs_p(i)) == 0.0) then
-                ivar_obs_p(i) = 1.0/(0.001*0.001) !THINK ABOUT THIS:
+                ivar_obs_p(i) = 1.0/(0.01*0.01) !THINK ABOUT THIS:
         else
-                ivar_obs_p(i) = 1.0/(0.1*0.25*obs_p(i)*0.1*0.25*obs_p(i)) !25% error for STI .ge. 1m
+                ivar_obs_p(i) = 1.0/(0.25*obs_p(i)*0.25*obs_p(i)) !25% error for STI .ge. 1m
 
         !        write(*,*) obs_p(i), ivar_obs_p(i)
         endif
