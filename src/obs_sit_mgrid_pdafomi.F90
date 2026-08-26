@@ -43,12 +43,18 @@ module obs_sit_mgrid_pdafomi
    character(lc) :: file_sit_mgrid = 'sit_obs.nc'
    !> Name of SIC variable in the observation file
    character(lc) :: varname_sit_mgrid = 'sit'
+   !> path to obs UNC file
+   character(lc) :: filename_sit_unc = 'sit_unc.nc'
+   !> Name of SIC UNC variable in the observation UNC file
+   character(lc) :: varname_sit_unc = 'sit_unc'
+
+   
    !> Time step index to read from the observation file
    integer :: nc_step = 10 !WILL NEED TO BE ABLE TO LINE THESE UP
 
    namelist /mgrid_sit_nml/ assim_sit_mgrid, use_global_obs, id_sfields, rms, &
                             lradius, sradius, noise_amp, file_sit_mgrid, &
-                            nc_step, varname_sit_mgrid
+                            nc_step, varname_sit_unc, filename_sit_unc,varname_sit_mgrid 
 
    !> Instance of full observation data type - see `PDAFomi` for details.
    type(obs_f), target, public :: thisobs
@@ -72,6 +78,10 @@ contains
           write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'obs_file   ', trim(file_sit_mgrid)
           write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'varname', trim(varname_sit_mgrid)
           write (*, '(a,5x,a,i0)')   'NEMO-PDAF', 'nc_step          ', nc_step
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'obs_unc_file   ', trim(filename_sit_unc)
+          write (*, '(a,5x,a,a)')    'NEMO-PDAF', 'unc_varname', trim(varname_sit_unc)
+
+
       end if
    end subroutine print_sit_mgrid_configuration
 
@@ -117,16 +127,18 @@ contains
       integer, intent(in)    :: step    !< Current time step
       integer, intent(inout) :: dim_obs !< Dimension of full observation vector
 
+
       integer :: i                             !> Counters
       integer :: dim_obs_p                     !> Number of process-local observations
       integer :: ncid, id_var
       integer :: pos(3), cnt(3)         
       real(pwp), allocatable :: obs_p(:)       !> PE-local observation vector
-
+      real(pwp), allocatable :: error_p(:)       !> PE-local observation ERROR  vector
       real(pwp), allocatable :: ivar_obs_p(:)  !> PE-local inverse observation error variance
       real(pwp), allocatable :: ocoord_p(:, :) !> PE-local observation coordinates
       real(pwp) :: rad_conv = 3.141592653589793/180.0 !> Degree to radian conversion
       real(pwp), allocatable :: obs_global(:,:) !< Global obs field read from file
+      real(pwp), allocatable :: error_global(:,:) !< Global obs unc field read from file
       integer :: ndims, natts, xtype
       integer :: dimids(NF90_MAX_VAR_DIMS)
       integer :: ik, dimlen
@@ -170,7 +182,7 @@ contains
       obs_global = -1
       call check( nf90_open(trim(file_sit_mgrid), NF90_NOWRITE, ncid) )
       call check( nf90_inq_varid(ncid, trim(varname_sit_mgrid), id_var) )
-      call check( nf90_inq_varid(ncid, trim(varname_sit_mgrid), id_var) )
+      !!call check( nf90_inq_varid(ncid, trim(varname_sit_mgrid), id_var) )
       
       call check( nf90_inquire_variable(ncid, id_var, name=varname, xtype=xtype, &
                                  ndims=ndims, dimids=dimids, natts=natts) )
@@ -208,6 +220,42 @@ contains
       !write(*,*) minval(obs_global), maxval(obs_global),has_nan,shape(obs_global)
       
 
+      ! **********************************
+      ! *** Read observation UNCERTAINTIES from file ***
+      ! **********************************
+      if (mype_filter == 0) then
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- obs file: ', trim(filename_sit_unc)
+         write (*, '(a,4x,a,a)')  'NEMO-PDAF', '--- variable: ', trim(varname_sit_unc)
+         write (*, '(a,4x,a,i0)') 'NEMO-PDAF', '--- reading nc_step: ', nc_step
+      end if
+
+      allocate(error_global(jpiglo, jpjglo)) !180 X 148
+      error_global = -1
+      call check( nf90_open(trim(filename_sit_unc), NF90_NOWRITE, ncid) )
+      call check( nf90_inq_varid(ncid, trim(varname_sit_unc), id_var) )
+      !!call check( nf90_inq_varid(ncid, trim(varname_sit_mgrid), id_var) )
+
+      call check( nf90_inquire_variable(ncid, id_var, name=varname, xtype=xtype, &
+                                 ndims=ndims, dimids=dimids, natts=natts) )
+
+      print *, 'Variable:', trim(varname)
+      print *, 'Number of dimensions:', ndims
+
+      ! Loop over dimensions in the order Fortran sees them to check same as ens
+      do ik = 1, ndims
+         call check( nf90_inquire_dimension(ncid, dimids(ik), name=dimname, len=dimlen) )
+         print *, 'Dim', ik, ':', trim(dimname), ' size =', dimlen
+      end do
+
+      pos = (/1, 1, nc_step/)
+      cnt = (/jpiglo, jpjglo, 1/)
+      call check( nf90_get_var(ncid, id_var, error_global, start=pos, count=cnt) )
+      call check( nf90_close(ncid))
+
+      where (ieee_is_nan(error_global))
+          error_global = -100.0            !set nan values to negative no., then filter out
+      end where
+
 
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
@@ -218,17 +266,20 @@ contains
       if (dim_obs_p > 0) then
          ! Vector of observations on the process sub-domain
          allocate (obs_p(dim_obs_p))
+         allocate (error_p(dim_obs_p))
          ! Coordinate array of observations on the process sub-domain
          allocate (ocoord_p(2, dim_obs_p))
          ! Coordinate array for observation operator
          allocate (thisobs%id_obs_p(1, dim_obs_p))
          allocate (ivar_obs_p(dim_obs_p))
          obs_p = -1
+         error_p = -1
          do i = 1, nwet
             ! State vector index counter for observation operator.
             obs_p(i) = 0.0_pwp
             !*** READING FROM GLOBAL_OBS - BUT IS THIS CORRECT??
             obs_p(i) = obs_global(wet_pts(1, i), wet_pts(2, i)) !LON 2, LAT 1 (?)
+            error_p(i) = error_global(wet_pts(1, i), wet_pts(2, i)) !LON 2, LAT 1 (?)
             !if (i == 1) then
 
             !    write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
@@ -246,6 +297,21 @@ contains
            ! Coordinates for observation operator (gridpoint)
            thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
         end do
+
+      ! ****************************************************************
+      ! *** Define observation errors for process-local observations ***
+      ! ****************************************************************
+      ! Set inverse observation error variances
+      !if (maytosept) then
+      ivar_obs_p = 1.0e-12_pwp 
+      do i=1,size(obs_p)
+        if (error_p(i) > 0.0_pwp) then
+           ivar_obs_p(i) = 1.0_pwp / (error_p(i) * error_p(i))
+        end if
+      ! error_p <= 0 (missing, NaN-replaced, or zero) keeps ivar = 1e-12
+      end do
+
+      deallocate(error_p)
      !!    has_nan = any(ieee_is_nan(obs_p))
      !!  write (*,*) 'obs_p:', minval(obs_p),maxval(obs_p),mype_filter,has_nan,shape(obs_p)
 
@@ -297,34 +363,30 @@ contains
         allocate (ocoord_p(2, 1))
         allocate (thisobs%id_obs_p(1, 1))
         allocate (ivar_obs_p(1))
+        ivar_obs_p(1) = 1.0e-12_pwp
       end if
       deallocate(obs_global)
+      deallocate(error_global)
 
-      ! ****************************************************************
-      ! *** Define observation errors for process-local observations ***
-      ! ****************************************************************
-      ! Set inverse observation error variances
-      !if (maytosept) then
-      ivar_obs_p = 1.0e-12 
-      do i=1,size(obs_p)
-        if ((obs_p(i)) < 0.) then
-                obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
-                ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
-        !        write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
-        !else if ((obs_p(i) == 0.0)) then
-        !        ivar_obs_p(i) = 1.0/(0.2*0.01*0.02*0.01)  !so we don't get infinity for zero
-        !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
-        else if (obs_p(i) > 0. .and. obs_p(i) < 1.) then
-                !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
-                ivar_obs_p(i) = 1.0/(obs_p(i)*obs_p(i)) !100* obs error here
-        else if ((obs_p(i)) == 0.0) then
-                ivar_obs_p(i) = 1.0/(0.01*0.01) !THINK ABOUT THIS:
-        else
-                ivar_obs_p(i) = 1.0/(0.25*obs_p(i)*0.25*obs_p(i)) !25% error for STI .ge. 1m
 
+      !  if ((obs_p(i)) < 0.) then
+      !          obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
+      !          ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
+      !  !        write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
+      !  !else if ((obs_p(i) == 0.0)) then
+      !  !        ivar_obs_p(i) = 1.0/(0.2*0.01*0.02*0.01)  !so we don't get infinity for zero
+      !  !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
+      !  else if (obs_p(i) > 0. .and. obs_p(i) < 1.) then
+      !          !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
+      !          ivar_obs_p(i) = 1.0/(obs_p(i)*obs_p(i)) !100* obs error here
+      !  else if ((obs_p(i)) == 0.0) then
+      !          ivar_obs_p(i) = 1.0/(0.01*0.01) !THINK ABOUT THIS:
+      !  else
+      !          ivar_obs_p(i) = 1.0/(0.25*obs_p(i)*0.25*obs_p(i)) !25% error for STI .ge. 1m
+      !
         !        write(*,*) obs_p(i), ivar_obs_p(i)
-        endif
-      enddo
+      !  endif
+     
       
       !enddo
       !endif
