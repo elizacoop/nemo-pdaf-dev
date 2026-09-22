@@ -480,6 +480,7 @@ contains
    !?Maybe? can this exist??? Assume not
    !BUT if ostate_p is negative then set it to zero ??
    ostate_p(1:size_osp) = (rho1 * sumv_i) - (rho2 * sumv_s)
+   !!ostate_p = max(ostate_p, 0.0_pwp)  !gets rid of negative freeboard (necessary ?)
    end if
 
    deallocate(sumv_i, sumv_s)
