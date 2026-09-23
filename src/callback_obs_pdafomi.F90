@@ -29,6 +29,7 @@ subroutine init_dim_obs_pdafomi(step, dim_obs)
    use obs_ssh_mgrid_pdafomi, only: assim_ssh_mgrid, init_dim_obs_ssh_mgrid
    use obs_sit_mgrid_pdafomi, only: assim_sit_mgrid, init_dim_obs_sit_mgrid
    use obs_fbd_mgrid_pdafomi, only: assim_fbd_mgrid, init_dim_obs_fbd_mgrid
+   use obs_snow_mgrid_pdafomi, only: assim_snow_mgrid, init_dim_obs_snow_mgrid
 
    implicit none
 
@@ -40,7 +41,7 @@ subroutine init_dim_obs_pdafomi(step, dim_obs)
    integer :: dim_obs_ssh_mgrid         ! Observation dimension
    integer :: dim_obs_sit_mgrid         ! Observation dimension
    integer :: dim_obs_fbd_mgrid         ! Observation dimension
-
+   integer :: dim_obs_snow_mgrid         ! Observation dimension
 
    ! *********************************************
    ! *** Initialize full observation dimension ***
@@ -50,6 +51,7 @@ subroutine init_dim_obs_pdafomi(step, dim_obs)
    dim_obs_ssh_mgrid = 0
    dim_obs_sit_mgrid = 0
    dim_obs_fbd_mgrid = 0
+   dim_obs_snow_mgrid = 0
 
    ! Call observation-specific routines
    ! The routines are independent, so it is not relevant
@@ -58,8 +60,10 @@ subroutine init_dim_obs_pdafomi(step, dim_obs)
    if (assim_ssh_mgrid) call init_dim_obs_ssh_mgrid(step, dim_obs_ssh_mgrid)
    if (assim_sit_mgrid) call init_dim_obs_sit_mgrid(step, dim_obs_sit_mgrid)
    if (assim_fbd_mgrid) call init_dim_obs_fbd_mgrid(step, dim_obs_fbd_mgrid)
+   if (assim_snow_mgrid) call init_dim_obs_snow_mgrid(step, dim_obs_snow_mgrid)
 
-   dim_obs = dim_obs_ssh_mgrid + dim_obs_sit_mgrid + dim_obs_fbd_mgrid
+
+   dim_obs = dim_obs_ssh_mgrid + dim_obs_sit_mgrid + dim_obs_fbd_mgrid + dim_obs_snow_mgrid
 
 end subroutine init_dim_obs_pdafomi
 
@@ -71,10 +75,12 @@ end subroutine init_dim_obs_pdafomi
 !!
 subroutine obs_op_pdafomi(step, dim_p, dim_obs, state_p, ostate)
 
+
    use mod_kind_pdaf
    use obs_ssh_mgrid_pdafomi, only: obs_op_ssh_mgrid
    use obs_sit_mgrid_pdafomi, only: obs_op_sit_mgrid
    use obs_fbd_mgrid_pdafomi, only: obs_op_fbd_mgrid
+   use obs_snow_mgrid_pdafomi, only: obs_op_snow_mgrid
 
    implicit none
 
@@ -97,6 +103,7 @@ subroutine obs_op_pdafomi(step, dim_p, dim_obs, state_p, ostate)
    call obs_op_ssh_mgrid(dim_p, dim_obs, state_p, ostate)
    call obs_op_sit_mgrid(dim_p, dim_obs, state_p, ostate)
    call obs_op_fbd_mgrid(dim_p, dim_obs, state_p, ostate)
+   call obs_op_snow_mgrid(dim_p, dim_obs, state_p, ostate)
 
 end subroutine obs_op_pdafomi
 
@@ -113,6 +120,7 @@ subroutine init_dim_obs_l_pdafomi(domain_p, step, dim_obs, dim_obs_l)
    use obs_ssh_mgrid_pdafomi, only: assim_ssh_mgrid, init_dim_obs_l_ssh_mgrid
    use obs_sit_mgrid_pdafomi, only: assim_sit_mgrid, init_dim_obs_l_sit_mgrid
    use obs_fbd_mgrid_pdafomi, only: assim_fbd_mgrid, init_dim_obs_l_fbd_mgrid
+   use obs_snow_mgrid_pdafomi, only: assim_snow_mgrid, init_dim_obs_l_snow_mgrid
 
    implicit none
 
@@ -128,6 +136,7 @@ subroutine init_dim_obs_l_pdafomi(domain_p, step, dim_obs, dim_obs_l)
       if (assim_ssh_mgrid) call init_dim_obs_l_ssh_mgrid(domain_p, step, dim_obs, dim_obs_l)
       if (assim_sit_mgrid) call init_dim_obs_l_sit_mgrid(domain_p, step, dim_obs, dim_obs_l)
       if (assim_fbd_mgrid) call init_dim_obs_l_fbd_mgrid(domain_p, step, dim_obs, dim_obs_l)
+      if (assim_snow_mgrid) call init_dim_obs_l_snow_mgrid(domain_p, step, dim_obs, dim_obs_l)
    else
       dim_obs_l = 0
    end if

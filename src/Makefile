@@ -57,7 +57,8 @@ OBJ_PDAF_USER =	callback_obs_pdafomi.o \
 		transforms_pdaf.o \
 		obs_ssh_mgrid_pdafomi.o \
 		obs_sit_mgrid_pdafomi.o \
-		obs_fbd_mgrid_pdafomi.o
+		obs_fbd_mgrid_pdafomi.o \
+		obs_snow_mgrid_pdafomi.o
 
 # Files for which online and offline mode only through cpp directives
 OBJ_DIFF_CPP = 	init_ens_pdaf.o \
@@ -110,12 +111,13 @@ cleanpdaf:
 # Some necessary dependencies to ensure that the program compiles
 
 assimilation_pdaf_offline.o: parallel_pdaf.o
-callback_obs_pdafomi.o: obs_ssh_mgrid_pdafomi.o # obs_sst_cmems_pdafomi.o
+callback_obs_pdafomi.o: obs_ssh_mgrid_pdafomi.o obs_sit_mgrid_pdafomi.o obs_fbd_mgrid_pdafomi.o obs_snow_mgrid_pdafomi.o
 initialize_offline.o: nemo_pdaf.o io_pdaf.o
 initialize_pdaf_offline.o: utils_pdaf.o config_pdaf.o
 io_pdaf.o: statevector_pdaf.o transforms_pdaf.o
-utils_pdaf.o: obs_ssh_mgrid_pdafomi.o obs_sit_mgrid_pdafomi.o obs_fbd_mgrid_pdafomi.o
+utils_pdaf.o: obs_ssh_mgrid_pdafomi.o obs_sit_mgrid_pdafomi.o obs_fbd_mgrid_pdafomi.o obs_snow_mgrid_pdafomi.o
 statevector_pdaf.o: nemo_pdaf.o parallel_pdaf.o
 obs_ssh_mgrid_pdafomi.o: io_pdaf.o statevector_pdaf.o parallel_pdaf.o nemo_pdaf.o assimilation_pdaf_offline.o
 obs_sit_mgrid_pdafomi.o: io_pdaf.o statevector_pdaf.o parallel_pdaf.o nemo_pdaf.o assimilation_pdaf_offline.o
 obs_fbd_mgrid_pdafomi.o: io_pdaf.o statevector_pdaf.o parallel_pdaf.o nemo_pdaf.o assimilation_pdaf_offline.o
+obs_snow_mgrid_pdafomi.o: io_pdaf.o statevector_pdaf.o parallel_pdaf.o nemo_pdaf.o assimilation_pdaf_offline.o

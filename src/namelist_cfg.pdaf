@@ -1317,3 +1317,37 @@
   nc_step = 101
 /
 
+&mgrid_fbd_nml
+  assim_fbd_mgrid = .false.
+  varname_fbd_mgrid = 'sea_ice_freeboard_vol' !! this is time=308,y=148,x=180
+  file_fbd_mgrid = '/work/n01/n01/elicoo/observations/frbxaice_v3_incl0_2010-2023.nc'
+  varname_fbd_unc = 'sea_ice_freeboard_unc'
+  filename_fbd_unc = '/work/n01/n01/elicoo/observations/frb_unc_v3_incl0_2010-2023.nc'
+  use_global_obs = 1
+  ! this is the index of obs. in sfields for fake obs.
+  !id_sfields = 1
+  rho_w = 1026.0
+  rho_i = 917.0
+  rho_s = 333.0
+  rms = 0.5
+  lradius = 100000
+  sradius = 100000
+  noise_amp = 0.5
+  nc_step = 101
+/
+&mgrid_snow_nml
+  assim_snow_mgrid = .true.
+  varname_snow_mgrid = 'snow_depth_vol' !! this is time=308,y=148,x=180
+  file_snow_mgrid = '/work/n01/n01/elicoo/observations/hsnxaice_v3_incl0_2010-2023.nc'
+  varname_snow_unc = 'snow_depth_unc'
+  filename_snow_unc = '/work/n01/n01/elicoo/observations/data_v3_2010-2023.nc'
+  use_global_obs = 1
+  ! this is the index of obs. in sfields for fake obs.
+  !id_sfields = 1
+  rms = 0.5
+  lradius = 100000
+  sradius = 100000
+  noise_amp = 0.5
+  nc_step = 101
+/
+
