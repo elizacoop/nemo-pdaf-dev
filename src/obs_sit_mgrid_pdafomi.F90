@@ -470,21 +470,20 @@ contains
       !*COMPARISON
          ! Compare obs with Hx
       !if (mype_filter == 0) then
-      write(*,*) 'NEMO-PDAF --- obs vs Hx comparison:'
-      do i = 1, size(thisobs%obs_f)
-      if (thisobs%obs_f(i) /= 0.0_pwp .or. &
-          ostate(i) /= 0.0_pwp) then
-         write(*,'(a,4x,a,i5,3(a,f12.6))') 'NEMO-PDAF', &
-            'i=', i, &
-            '  obs=', thisobs%obs_f(i), &
-            '  Hx=', ostate(i), &
-            '  innov=', thisobs%obs_f(i) - ostate(i), &
-            '  ivar=', thisobs%ivar_obs_f(i), &
-           '  lon=', thisobs%ocoord_f(1,i)/(3.141592653589793/180.0), &
-           '  lat=', thisobs%ocoord_f(2,i)/(3.141592653589793/180.0)
-      endif
-      end do
-      !end if
+      !!*write(*,*) 'NEMO-PDAF --- obs vs Hx comparison:'
+      !!do i = 1, size(thisobs%obs_f)
+      !!if (thisobs%obs_f(i) /= 0.0_pwp .or. &
+      !!    ostate(i) /= 0.0_pwp) then
+      !!   write(*,'(a,4x,a,i5,3(a,f12.6))') 'NEMO-PDAF', &
+      !!      'i=', i, &
+      !!      '  obs=', thisobs%obs_f(i), &
+      !!      '  Hx=', ostate(i), &
+      !!      '  innov=', thisobs%obs_f(i) - ostate(i), &
+      !!      '  ivar=', thisobs%ivar_obs_f(i), &
+      !!     '  lon=', thisobs%ocoord_f(1,i)/(3.141592653589793/180.0), &
+      !!     '  lat=', thisobs%ocoord_f(2,i)/(3.141592653589793/180.0)
+      !!endif
+      !!end do
 
 
 

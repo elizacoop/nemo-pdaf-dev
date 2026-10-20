@@ -311,10 +311,10 @@ contains
         if ((obs_p(i)) < 0.) then
                 obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
                 ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
-                write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
+                !!write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
         else if ((obs_p(i) == 0.0)) then
                 ivar_obs_p(i) = 1.0/(0.2*0.02)  !prob don't really need this extra branch for zero
-                write(*,*) 'REAL ZERO SIC 0OBS', obs_p(i),ivar_obs_p(i)
+                !!write(*,*) 'REAL ZERO SIC 0OBS', obs_p(i),ivar_obs_p(i)
         else
                 !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
                 ivar_obs_p(i) = 1.0/(0.2*0.2)!(0.2*0.2)
