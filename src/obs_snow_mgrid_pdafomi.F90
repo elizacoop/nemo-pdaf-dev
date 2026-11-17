@@ -118,7 +118,7 @@ contains
    subroutine init_dim_obs_snow_mgrid(step, dim_obs)
       use PDAF, only: PDAFomi_gather_obs
       use statevector_pdaf, only: sfields
-      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit,jpiglo,jpjglo
+      use nemo_pdaf, only: nwet, wet_pts, glamt, gphit, i0, j0, ni_p, nj_p
       use io_pdaf, only: check
       use, intrinsic :: ieee_arithmetic ! to detect Nans
 
@@ -126,28 +126,21 @@ contains
       integer, intent(inout) :: dim_obs !< Dimension of full observation vector
 
 
-      integer :: i                             !> Counters
+      integer :: i, i_w, j, i_obs              !> Counters
       integer :: dim_obs_p                     !> Number of process-local observations
       integer :: ncid, id_var
-      integer :: pos(3), cnt(3)         
+      integer :: pos(3), cnt(3)
       real(pwp), allocatable :: obs_p(:)       !> PE-local observation vector
-      real(pwp), allocatable :: error_p(:)       !> PE-local observation ERROR  vector
       real(pwp), allocatable :: ivar_obs_p(:)  !> PE-local inverse observation error variance
       real(pwp), allocatable :: ocoord_p(:, :) !> PE-local observation coordinates
-      real(pwp) :: rad_conv = 3.141592653589793/180.0 !> Degree to radian conversion
       real(pwp), allocatable :: obs_global(:,:) !< Global obs field read from file
       real(pwp), allocatable :: error_global(:,:) !< Global obs unc field read from file
       integer :: ndims, natts, xtype
       integer :: dimids(NF90_MAX_VAR_DIMS)
       integer :: ik, dimlen
       character(len=NF90_MAX_NAME) :: varname, dimname
-      logical :: has_nan
-      !logical :: maytosept = .true.
-      real(pwp) :: obs_threshold = 0.0   ! default catches fill values
-      integer   :: count
-      
 
-      !maytosept = .true. !#PUT THIS IN THE NAMELIST CONFIG; set there from runscript
+      real(pwp) :: rad_conv = 3.141592653589793/180.0 !> Degree to radian conversion
 
       ! *****************************
       ! *** Global setting config ***
@@ -166,7 +159,7 @@ contains
       thisobs%use_global_obs = use_global_obs
       ! Omit large innovation to omit nwet = 0 points
       thisobs%inno_omit = 30!1e6    ! nwet= 0 points will have obs = 0? but no corresponding model state(?)
-      
+
       ! **********************************
       ! *** Read observations from file ***
       ! **********************************
@@ -176,12 +169,11 @@ contains
          write (*, '(a,4x,a,i0)') 'NEMO-PDAF', '--- reading nc_step: ', nc_step
       end if
 
-      allocate(obs_global(jpiglo, jpjglo)) !180 X 148
+      allocate(obs_global(ni_p, nj_p)) !180 X 148
       obs_global = -1
       call check( nf90_open(trim(file_snow_mgrid), NF90_NOWRITE, ncid) )
       call check( nf90_inq_varid(ncid, trim(varname_snow_mgrid), id_var) )
-      !!call check( nf90_inq_varid(ncid, trim(varname_sit_mgrid), id_var) )
-      
+
       call check( nf90_inquire_variable(ncid, id_var, name=varname, xtype=xtype, &
                                  ndims=ndims, dimids=dimids, natts=natts) )
 
@@ -194,29 +186,14 @@ contains
          print *, 'Dim', ik, ':', trim(dimname), ' size =', dimlen
       end do
 
-      pos = (/1, 1, nc_step/)
-      cnt = (/jpiglo, jpjglo, 1/)
+      pos = (/i0, j0, nc_step/)
+      cnt = (/ni_p, nj_p, 1/)
       call check( nf90_get_var(ncid, id_var, obs_global, start=pos, count=cnt) )
       call check( nf90_close(ncid))
-      !write(*,*) 'obs_global shape:', shape(obs_global)
-      !write(*,*) 'obs_global min/max:', minval(obs_global), maxval(obs_global)
-      !write(*,*) 'jpiglo, jpjglo:', jpiglo, jpjglo
-      !do i = 1, min(5, nwet)
-      !write(*,*) 'wet_pts(1,2):', wet_pts(1,i), wet_pts(2,i), &
-      !         'obs_global(1,2):', obs_global(wet_pts(1,i), wet_pts(2,i)), &
-      !         'obs_global(2,1):', obs_global(wet_pts(2,i), wet_pts(1,i))
-      !end do
-
-
-
 
       where (ieee_is_nan(obs_global))
           obs_global = -100.0            !set nan values to negative no., then filter out
       end where
-
-      !has_nan = any(ieee_is_nan(obs_global))
-      !write(*,*) minval(obs_global), maxval(obs_global),has_nan,shape(obs_global)
-      
 
       ! **********************************
       ! *** Read observation UNCERTAINTIES from file ***
@@ -227,7 +204,7 @@ contains
          write (*, '(a,4x,a,i0)') 'NEMO-PDAF', '--- reading nc_step: ', nc_step
       end if
 
-      allocate(error_global(jpiglo, jpjglo)) !180 X 148
+      allocate(error_global(ni_p, nj_p)) !180 X 148
       error_global = -1
       call check( nf90_open(trim(filename_snow_unc), NF90_NOWRITE, ncid) )
       call check( nf90_inq_varid(ncid, trim(varname_snow_unc), id_var) )
@@ -245,152 +222,65 @@ contains
          print *, 'Dim', ik, ':', trim(dimname), ' size =', dimlen
       end do
 
-      pos = (/1, 1, nc_step/)
-      cnt = (/jpiglo, jpjglo, 1/)
+      pos = (/i0, j0, nc_step/)
+      cnt = (/ni_p, nj_p, 1/)
       call check( nf90_get_var(ncid, id_var, error_global, start=pos, count=cnt) )
       call check( nf90_close(ncid))
 
       where (ieee_is_nan(error_global))
           error_global = -100.0            !set nan values to negative no., then filter out
       end where
-
-
       ! ***********************************************************
       ! *** Count available observations for the process domain ***
       ! *** and initialize index and coordinate arrays.         ***
       ! ***********************************************************
-      !Set number of local observations
-      dim_obs_p = nwet
+      ! Set number of local observations
+      dim_obs_p = 0
+      do i_w = 1, nwet
+         i = wet_pts(6,i_w)
+         j = wet_pts(7,i_w)
+         ! skip points that have negative uncertainties (fill values)
+         if (error_global(i, j) <= 0.0) cycle
+         ! skip negative values (fill values)
+         if (obs_global(i, j) < 0.0) cycle
+         dim_obs_p = dim_obs_p + 1
+      end do
+
+      ! set observation vector
       if (dim_obs_p > 0) then
          ! Vector of observations on the process sub-domain
          allocate (obs_p(dim_obs_p))
-         allocate (error_p(dim_obs_p))
          ! Coordinate array of observations on the process sub-domain
          allocate (ocoord_p(2, dim_obs_p))
          ! Coordinate array for observation operator
          allocate (thisobs%id_obs_p(1, dim_obs_p))
          allocate (ivar_obs_p(dim_obs_p))
-         obs_p = -1
-         error_p = -1
-         do i = 1, nwet
-            ! State vector index counter for observation operator.
-            obs_p(i) = 0.0_pwp
-            !*** READING FROM GLOBAL_OBS - BUT IS THIS CORRECT??
-            obs_p(i) = obs_global(wet_pts(1, i), wet_pts(2, i)) !LON 2, LAT 1 (?)
-            error_p(i) = error_global(wet_pts(1, i), wet_pts(2, i)) !LON 2, LAT 1 (?)
-            !if (i == 1) then
+         i_obs = 0
+         do i_w = 1, nwet
+            i = wet_pts(6,i_w)
+            j = wet_pts(7,i_w)
+            ! skip points that have negative uncertainties (fill values)
+            if (error_global(i, j) <= 0.0) cycle
+            ! skip negative values (fill values)
+            if (obs_global(i, j) < 0.0) cycle
 
-            !    write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
-            !    write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
-            !endif
-            ! if (i == nwet) then
-            !      write(*,*) obs_global(wet_pts(6, i),wet_pts(7, i))
-            !      write(*,*) obs_global(wet_pts(2, i),wet_pts(1, i))
-
-             !endif
-           !write(*,*)
-            ! Observation coordinates - must be in radians for PDAFOMI
-           ocoord_p(1, i) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
-           ocoord_p(2, i) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
-           ! Coordinates for observation operator (gridpoint)
-           thisobs%id_obs_p(1, i) = i + sfields(id_sfields)%off
-        end do
-
-      ! ****************************************************************
-      ! *** Define observation errors for process-local observations ***
-      ! ****************************************************************
-      ! Set inverse observation error variances
-      !if (maytosept) then
-      ivar_obs_p = 1.0e-12_pwp 
-      do i=1,size(obs_p)
-        if (error_p(i) > 0.0_pwp) then
-           ivar_obs_p(i) = 1.0_pwp / (error_p(i) * error_p(i))
-        end if
-      ! error_p <= 0 (missing, NaN-replaced, or zero) keeps ivar = 1e-12
-      end do
-
-      deallocate(error_p)
-     !!    has_nan = any(ieee_is_nan(obs_p))
-     !!  write (*,*) 'obs_p:', minval(obs_p),maxval(obs_p),mype_filter,has_nan,shape(obs_p)
-
-
-         ! *********************************************************
-         ! *** For twin experiment: Read synthetic observations  ***
-         ! *********************************************************
-         !call add_noise(dim_obs_p, obs_p) DON'T WANT TO DO THIS - need to read in WHOLE OBS
-
-            ! First pass: count valid observationsabove zero
-      !dim_obs_p = 0
-      !do i = 1, nwet
-      !   if (obs_global(wet_pts(2, i), wet_pts(1, i)) > obs_threshold) then
-      !      dim_obs_p = dim_obs_p + 1
-      !   end if
-      !end do
-
-      !if (dim_obs_p > 0) then
-         ! Vector of observations on the process sub-domain
-      !   allocate (obs_p(dim_obs_p))
-         ! Coordinate array of observations on the process sub-domain
-      !   allocate (ocoord_p(2, dim_obs_p))
-         ! Coordinate array for observation operator
-      !   allocate (thisobs%id_obs_p(1, dim_obs_p))
-      !   allocate (ivar_obs_p(dim_obs_p))
-
-         ! Second pass: fill arrays with valid observations only
-      !   count = 0
-      !   do i = 1, nwet
-      !      if (obs_global(wet_pts(2, i), wet_pts(1, i)) > obs_threshold) then
-      !         count = count + 1
-      !         write(*,*) wet_pts(2, i), wet_pts(1, i),obs_global(wet_pts(2, i), wet_pts(1, i))
-      !         obs_p(count) = obs_global(wet_pts(2, i), wet_pts(1, i))
-               ! Observation coordinates - must be in radians for PDAFOMI
-      !         ocoord_p(1, count) = glamt(wet_pts(6, i), wet_pts(7, i))*rad_conv
-      !         ocoord_p(2, count) = gphit(wet_pts(6, i), wet_pts(7, i))*rad_conv
-               ! Coordinates for observation operator (gridpoint)
-      !         thisobs%id_obs_p(1, count) = i + sfields(id_sfields)%off
-               !thisobs%id_obs_p(1, count) = count + sfields(id_sfields)%off
-      !      end if
-      !   end do
-
-         !has_nan = any(ieee_is_nan(obs_p))
-         !write (*,*) 'obs_p:', minval(obs_p), maxval(obs_p), mype_filter, has_nan, shape(obs_p)
+            i_obs = i_obs + 1
+            obs_p(i_obs) = obs_global(i, j)
+            ocoord_p(1,i_obs) = glamt(i,j)*rad_conv
+            ocoord_p(2,i_obs) = gphit(i,j)*rad_conv
+            thisobs%id_obs_p(1,i_obs) = i_w + sfields(id_sfields)%off
+            ivar_obs_p(i_obs) = 1.0_pwp / (error_global(i, j) * error_global(i, j))
+         end do
       else
          ! Set empty arrays if no local observations
-        allocate (obs_p(1))
-        obs_p(1) = -1.0! so that gets LARGE obs error applied thisobs%inno_omit
-        allocate (ocoord_p(2, 1))
-        allocate (thisobs%id_obs_p(1, 1))
-        allocate (ivar_obs_p(1))
-        ivar_obs_p(1) = 1.0e-12_pwp
+         allocate (obs_p(1))
+         allocate (ocoord_p(2, 1))
+         allocate (thisobs%id_obs_p(1, 1))
+         allocate (ivar_obs_p(1))
       end if
+
       deallocate(obs_global)
       deallocate(error_global)
-
-
-      !  if ((obs_p(i)) < 0.) then
-      !          obs_p(i) = 0.0   !set to zero but distinct from real zero obs becasue large obs error
-      !          ivar_obs_p(i) = 1.0e-12 !equivalent to large obs error; will be ignored
-      !  !        write(*,*) obs_p(i), ivar_obs_p(i), '**WAS EMPTY OR NAN**' !these should be gone now anyway
-      !  !else if ((obs_p(i) == 0.0)) then
-      !  !        ivar_obs_p(i) = 1.0/(0.2*0.01*0.02*0.01)  !so we don't get infinity for zero
-      !  !        write(*,*) 'REAL ZERO OBS', obs_p(i),ivar_obs_p(i)
-      !  else if (obs_p(i) > 0. .and. obs_p(i) < 1.) then
-      !          !ivar_obs_p(i) = 1.0/(0.2*obs_p(i)*0.2*obs_p(i))
-      !          ivar_obs_p(i) = 1.0/(obs_p(i)*obs_p(i)) !100* obs error here
-      !  else if ((obs_p(i)) == 0.0) then
-      !          ivar_obs_p(i) = 1.0/(0.01*0.01) !THINK ABOUT THIS:
-      !  else
-      !          ivar_obs_p(i) = 1.0/(0.25*obs_p(i)*0.25*obs_p(i)) !25% error for STI .ge. 1m
-      !
-        !        write(*,*) obs_p(i), ivar_obs_p(i)
-      !  endif
-     
-      
-      !enddo
-      !endif
-
-      !ivar_obs_p(:) = 1.0/(rms*rms)
-      
 
       ! ****************************************
       ! *** Gather global observation arrays ***
